@@ -9,7 +9,7 @@ namespace Models.Entities;
 /// <summary>
 /// Represents simple product with base parameters, without assigned to any user.
 /// </summary>
-public class ProductBase
+internal class ProductBase
 {
     /// <summary>
     /// Name of the product.

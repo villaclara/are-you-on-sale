@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.Entities;
+namespace Core.DTOs;
 
-/// <summary>
-/// Represents product object with assigned user and additional parameters.
-/// </summary>
-internal class Product : ProductBase
+public class ProductDTO
 {
 	/// <summary>
 	/// Id for db.
@@ -19,25 +16,25 @@ internal class Product : ProductBase
 	/// <summary>
 	/// Represents userId assigned to product (ChatId).
 	/// </summary>
-	public long UserId {  get; set; }
+	public long UserId { get; set; }
 
 	/// <summary>
 	/// Price of product for a time of <see cref="LastCheckedDate"/>.
 	/// </summary>
-    public decimal CurrentPrice { get; set; }
+	public decimal CurrentPrice { get; set; }
 
 	/// <summary>
 	/// Difference in percent between <see cref="ProductBase.OriginPrice"/> and <see cref="Product.CurrentPrice"/>.
 	/// </summary>
-    public int SalePercent { get; set; }
+	public int SalePercent { get; set; }
 
 	/// <summary>
 	/// Date last check of product price was performed.
 	/// </summary>
-    public DateTime LastCheckedDate { get; set; }
+	public DateTime LastCheckedDate { get; set; }
 
 	/// <summary>
 	/// Date when the product was created and added to storage.
 	/// </summary>
-    public DateTime CreatedAtDate { get; set; }
+	public DateTime CreatedAtDate { get; set; }
 }
