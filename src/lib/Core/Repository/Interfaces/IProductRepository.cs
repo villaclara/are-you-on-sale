@@ -13,6 +13,19 @@ namespace Core.Repository.Interfaces;
 internal interface IProductRepository
 {
 	/// <summary>
+	/// Get all <see cref="Product"/>s.
+	/// </summary>
+	/// <returns><see cref="IEnumerable{Product}"/> list of all products.</returns>
+	IEnumerable<Product> GetAllProducts();
+
+	/// <summary>
+	/// Get the <see cref="Product"/> by given id.
+	/// </summary>
+	/// <param name="id">Id to search.</param>
+	/// <returns><see cref="Product"/> object if found, null if fail.</returns>
+	Product? GetProductById(int id);
+
+	/// <summary>
 	/// Create and add <see cref="Product"/> object into db.
 	/// </summary>
 	/// <param name="product">Object to add.</param>

@@ -9,7 +9,7 @@ namespace Models.Entities;
 /// <summary>
 /// Represents product object with assigned user and additional parameters.
 /// </summary>
-internal class Product : ProductBase
+public class Product : ProductBase
 {
 	/// <summary>
 	/// Id for db.
