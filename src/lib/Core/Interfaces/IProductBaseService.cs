@@ -18,7 +18,7 @@ public interface IProductBaseService
 	/// </summary>
 	/// <param name="originUrl">Url to parse.</param>
 	/// <returns><see cref="ProductBase"/> object if success, otherwise null.</returns>
-	Task<ProductBase?> TryGetProductBaseFromAnyOrigin(string originUrl);
+	Task<ProductBase?> TryGetProductBaseFromAnyOriginAsync(string originUrl);
 
 	/// <summary>
 	/// Parse link with specifying the <see cref="OriginType"/> (shop).
@@ -26,5 +26,5 @@ public interface IProductBaseService
 	/// <param name="originType">One of <see cref="OriginType"/> enums.</param>
 	/// <param name="originUrl">Url to parse.</param>
 	/// <returns><see cref="ProductBase"/> object if success, otherwise null.</returns>
-	Task<ProductBase?> GetProductBaseFromOrigin(OriginType originType, string originUrl);
+	Task<ProductBase?> GetProductBaseFromOriginAsync(OriginType originType, string originUrl);
 }

@@ -14,7 +14,7 @@ public class Product : ProductBase
 	/// <summary>
 	/// Id for db.
 	/// </summary>
-	public int Id { get; set; }
+	public Guid Id { get; set; }
 
 	/// <summary>
 	/// Represents userId assigned to product (ChatId).

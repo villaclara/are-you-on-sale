@@ -12,11 +12,22 @@ namespace Core.Interfaces;
 /// </summary>
 public interface ITrackProductService
 {
-	IProductBaseService ProductBaseService { get; }
 	
-	event Action ProductPriceChanged;
+	/// <summary>
+	/// Event is raised when the <see cref="ProductBase"/> price has been changed.
+	/// </summary>
+	event Action<Product> ProductPriceChanged;
 
-	Task OnTrackRequestReceived();
+	/// <summary>
+	/// Get all products from db and perform actual price check, invoking <see cref="ProductPriceChanged"/> event in that case.
+	/// </summary>
+	/// <returns>Task.</returns>
+	Task DoPriceCheckAllProducts();
 
-	Task TrackProductManually(Product product);
+	/// <summary>
+	/// Do price check for one given <see cref="Product"/>.
+	/// </summary>
+	/// <param name="product">Object to check price for it.</param>
+	/// <returns>Task.</returns>
+	Task DoPriceCheckForSingleProduct(Product product);
 }

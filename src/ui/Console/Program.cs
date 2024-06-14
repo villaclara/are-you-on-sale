@@ -6,7 +6,4 @@ using Core.Repository.Services;
 Console.WriteLine("Hello, World!");
 
 
-IProductRepository repo;
-ProductRepository productRepository;
-
 IApplicationDBContext db;

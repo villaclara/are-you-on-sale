@@ -14,29 +14,29 @@ internal class ProductRepository(IApplicationDBContext ctx) : IProductRepository
 {
 	private readonly IApplicationDBContext _ctx = ctx;
 
-	public async Task<Product?> CreateProduct(Product product)
+	public async Task<Product?> CreateProductAsync(Product product)
 	{
 		try
 		{
-			Log.Information("{@Method} - Try create product ({@product}).", nameof(CreateProduct), product);
+			Log.Information("{@Method} - Try create product ({@product}).", nameof(CreateProductAsync), product);
 			_ctx.Products.Add(product);
 			await _ctx.SaveChangesAsync();
 			return product;
 		}
 		catch (Exception ex)
 		{
-			Log.Error("{@Method} - Exception ({ex}).", nameof(CreateProduct), ex.Message);
+			Log.Error("{@Method} - Exception ({ex}).", nameof(CreateProductAsync), ex.Message);
 			return null;
 		}
 	}
 
-	public async Task<bool> DeleteProduct(int productId)
+	public async Task<bool> DeleteProductAsync(Guid productId)
 	{
-		Log.Information("{@Method} - Try delete productId ({@productId}).", nameof(DeleteProduct), productId);
+		Log.Information("{@Method} - Try delete productId ({@productId}).", nameof(DeleteProductAsync), productId);
 		var product = _ctx.Products.FirstOrDefault(p => p.Id == productId);
 		if(product == null)
 		{
-			Log.Warning("{@Method} - No projects found. Return null", nameof(DeleteProduct));
+			Log.Warning("{@Method} - No projects found. Return null", nameof(DeleteProductAsync));
 			return false;
 		}
 
@@ -45,18 +45,28 @@ internal class ProductRepository(IApplicationDBContext ctx) : IProductRepository
 		return true;
 	}
 
-	public async Task<Product?> UpdateProduct(Product product)
+	public IEnumerable<Product> GetAllProducts()
+	{
+		throw new NotImplementedException();
+	}
+
+	public Product? GetProductById(Guid productId)
+	{
+		throw new NotImplementedException();
+	}
+
+	public async Task<Product?> UpdateProductAsync(Product product)
 	{
 		try
 		{
-			Log.Information("{@Method} - Try update product ({@product}).", nameof(UpdateProduct), product);
+			Log.Information("{@Method} - Try update product ({@product}).", nameof(UpdateProductAsync), product);
 			_ctx.Products.Update(product);
 			await _ctx.SaveChangesAsync();
 			return product;
 		}
 		catch (Exception ex)
 		{
-			Log.Error("{@Method} - Exception ({@ex}).", nameof(UpdateProduct), ex.Message);
+			Log.Error("{@Method} - Exception ({@ex}).", nameof(UpdateProductAsync), ex.Message);
 			return null;
 		}
 	}
