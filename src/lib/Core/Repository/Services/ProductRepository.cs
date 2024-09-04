@@ -47,12 +47,14 @@ internal class ProductRepository(IApplicationDBContext ctx) : IProductRepository
 
 	public IEnumerable<Product> GetAllProducts()
 	{
-		throw new NotImplementedException();
+		Log.Information("{@Method} - Try get all products.", nameof(GetAllProducts));
+		return _ctx.Products.ToList() ?? [];
 	}
 
 	public Product? GetProductById(Guid productId)
 	{
-		throw new NotImplementedException();
+		Log.Information("{@Method} - Try get product by id({@id}).", nameof(GetProductById), productId);
+		return _ctx.Products.FirstOrDefault(x => x.Id == productId);
 	}
 
 	public async Task<Product?> UpdateProductAsync(Product product)
