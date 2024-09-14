@@ -9,6 +9,6 @@ namespace Models.Enums;
 public enum OriginType
 {
 	None = 0,
-	Rozetka = 1,
-	Reserved = 2
+	RZ = 1,
+	RS = 2
 }

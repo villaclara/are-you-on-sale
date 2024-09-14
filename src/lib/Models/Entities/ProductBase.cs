@@ -25,4 +25,9 @@ public class ProductBase
     /// Base price for the product.
     /// </summary>
     public decimal OriginPrice { get; set; }
+
+    /// <summary>
+    /// Current price for the product in case there is ALREADY a sale.
+    /// </summary>
+    public decimal CurrentPrice { get; set; }
 }

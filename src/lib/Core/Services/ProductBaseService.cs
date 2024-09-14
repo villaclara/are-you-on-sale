@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using Core.Services.ShopServices;
 using Models.Entities;
 using Models.Enums;
 using System;
@@ -9,11 +10,15 @@ using System.Threading.Tasks;
 
 namespace Core.Services;
 
-internal class ProductBaseService : IProductBaseService
+public class ProductBaseService : IProductBaseService
 {
-	public Task<ProductBase?> GetProductBaseFromOriginAsync(OriginType originType, string originUrl)
+	public async Task<ProductBase?> GetProductBaseFromOriginAsync(OriginType originType, string originUrl)
 	{
-		throw new NotImplementedException();
+		return originType switch
+		{
+			OriginType.RZ => await RZ_Collector.GetProductBaseFromShopAsync(originUrl),
+			_ => throw new Exception()
+		};
 	}
 
 	public Task<ProductBase?> TryGetProductBaseFromAnyOriginAsync(string originUrl)

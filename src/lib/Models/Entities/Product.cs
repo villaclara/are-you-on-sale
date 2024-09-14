@@ -24,7 +24,7 @@ public class Product : ProductBase
 	/// <summary>
 	/// Price of product for a time of <see cref="LastCheckedDate"/>.
 	/// </summary>
-    public decimal CurrentPrice { get; set; }
+    public new decimal CurrentPrice { get; set; }
 
 	/// <summary>
 	/// Difference in percent between <see cref="ProductBase.OriginPrice"/> and <see cref="Product.CurrentPrice"/>.
