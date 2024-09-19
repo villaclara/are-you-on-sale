@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,11 @@ public class ProductBase
     /// Link where project were retrieved.
     /// </summary>
     public string OrinigLink { get; set; } = null!;
+
+    /// <summary>
+    /// Type of Shop for the product.
+    /// </summary>
+    public OriginType OriginType { get; set; }
 
     /// <summary>
     /// Base price for the product.

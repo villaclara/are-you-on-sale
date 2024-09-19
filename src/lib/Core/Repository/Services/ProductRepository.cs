@@ -1,18 +1,13 @@
-﻿using Core.Interfaces;
-using Core.Repository.Interfaces;
+﻿using Core.Repository.Interfaces;
+using DB.DB;
 using Models.Entities;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Repository.Services;
 
-internal class ProductRepository(IApplicationDBContext ctx) : IProductRepository
+public class ProductRepository(ApplicationDBContext ctx) : IProductRepository
 {
-	private readonly IApplicationDBContext _ctx = ctx;
+	private readonly ApplicationDBContext _ctx = ctx;
 
 	public async Task<Product?> CreateProductAsync(Product product)
 	{
@@ -34,7 +29,7 @@ internal class ProductRepository(IApplicationDBContext ctx) : IProductRepository
 	{
 		Log.Information("{@Method} - Try delete productId ({@productId}).", nameof(DeleteProductAsync), productId);
 		var product = _ctx.Products.FirstOrDefault(p => p.Id == productId);
-		if(product == null)
+		if (product == null)
 		{
 			Log.Warning("{@Method} - No projects found. Return null", nameof(DeleteProductAsync));
 			return false;
@@ -64,6 +59,7 @@ internal class ProductRepository(IApplicationDBContext ctx) : IProductRepository
 			Log.Information("{@Method} - Try update product ({@product}).", nameof(UpdateProductAsync), product);
 			_ctx.Products.Update(product);
 			await _ctx.SaveChangesAsync();
+
 			return product;
 		}
 		catch (Exception ex)

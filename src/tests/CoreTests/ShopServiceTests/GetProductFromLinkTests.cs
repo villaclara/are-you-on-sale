@@ -1,11 +1,5 @@
 ﻿using Core.Services.ShopServices;
 using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 
 namespace CoreTests.ShopServiceTests;
@@ -59,7 +53,7 @@ public class GetProductFromLinkTests
 		Assert.Equal(expected, result);
 	}
 
-	
+
 
 	[Fact]
 	public void GetOldPriceWithRegexRZ_ReturnString()
@@ -88,7 +82,8 @@ public class GetProductFromLinkTests
 			Name = @"Миша SteelSeries Rival 3 USB Black (SS62513)",
 			OrinigLink = "https://rozetka.com.ua/ua/steelseries_62513/p179706829/",
 			OriginPrice = 1699,
-			CurrentPrice = 1699
+			CurrentPrice = 1699,
+			OriginType = Models.Enums.OriginType.RZ
 		};
 
 

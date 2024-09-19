@@ -1,12 +1,5 @@
-﻿using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using Models.Entities;
 
 namespace Core.Services.ShopServices;
 
@@ -46,6 +39,7 @@ public static class RZ_Collector
 			{
 				Name = titleCut,
 				OrinigLink = url,
+				OriginType = Models.Enums.OriginType.RZ,
 				OriginPrice = old_priceInt,
 				CurrentPrice = priceInt
 			};
@@ -64,7 +58,7 @@ public static class RZ_Collector
 		// https://rozetka.com.ua/ua/steelseries_62513/p179706829/
 		var indexP = url.LastIndexOf('p');
 		string str = url[(indexP + 1)..]; // 179706829/
-		if(str.Last() == '/')
+		if (str.Last() == '/')
 		{
 			str = str.Remove(str.Length - 1);
 		}
@@ -76,7 +70,7 @@ public static class RZ_Collector
 	{
 		var strs = Regex.Match(source, pattern);
 
-		if(!strs.Success)
+		if (!strs.Success)
 		{
 			throw new Exception("no matches for regex");
 		}

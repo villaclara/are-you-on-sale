@@ -4,6 +4,7 @@ using Models.Entities;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ public class ProductService(ITrackProductService trackProductService,
 			Id = Guid.NewGuid(),
 			Name = product.Name,
 			OriginPrice = product.OriginPrice,
+			OriginType = product.OriginType,
 			CurrentPrice = product.OriginPrice,
 			OrinigLink = product.OrinigLink,
 			CreatedAtDate = DateTime.Now,
@@ -36,23 +38,36 @@ public class ProductService(ITrackProductService trackProductService,
 		await _productRepository.CreateProductAsync(fullProduct);
 	}
 
-	public Task DeleteProductOfUserAsync(long userId, Guid productId)
+	public async Task DeleteProductOfUserAsync(long userId, Guid productId)
 	{
-		throw new NotImplementedException();
+		var prod = _productRepository.GetProductById(productId);
+		if(prod == null || prod.UserId != userId)
+		{
+			Log.Error("{@Method} - Product not found/Product does not belong to user.", nameof(DeleteProductOfUserAsync));
+			throw new ArgumentException("Product not found/Product does not belong to user.");
+		}
+			
+		await _productRepository.DeleteProductAsync(productId);
 	}
 
 	public IEnumerable<Product> GetAllProducts()
 	{
-		throw new NotImplementedException();
+		return _productRepository.GetAllProducts();
 	}
 
 	public Product? GetProductByIdForUser(Guid productId, long userId)
 	{
-		throw new NotImplementedException();
+		var prod = _productRepository.GetProductById(productId);
+		if( prod == null || prod.UserId != userId)
+		{
+			Log.Warning("{@Method} - Product({@prod}) for user({@user}) not found.", nameof(GetProductByIdForUser), productId, userId);
+			return default;
+		}
+		return prod;
 	}
 
 	public IEnumerable<Product> GetProductsForUser(long userId)
 	{
-		throw new NotImplementedException();
+		return _productRepository.GetAllProducts().Where(x => x.UserId == userId) ?? [];
 	}
 }

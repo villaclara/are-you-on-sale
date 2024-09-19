@@ -4,6 +4,3 @@ using Core.Repository.Interfaces;
 using Core.Repository.Services;
 
 Console.WriteLine("Hello, World!");
-
-
-IApplicationDBContext db;

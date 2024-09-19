@@ -1,16 +1,10 @@
 ﻿using Core.Services;
-using Core.Services.ShopServices;
 using Models.Entities;
 using Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoreTests.ProductBaseServiceTests;
 
-public class GetProductFromSpecOrigin
+public class GetProductFromSpecOriginTests
 {
 	[Fact]
 	public async Task GetProduct_ReturnMouse()
@@ -22,7 +16,8 @@ public class GetProductFromSpecOrigin
 			Name = @"Миша SteelSeries Rival 3 USB Black (SS62513)",
 			OrinigLink = "https://rozetka.com.ua/ua/steelseries_62513/p179706829/",
 			OriginPrice = 1699,
-			CurrentPrice = 1699
+			CurrentPrice = 1699,
+			OriginType = OriginType.RZ
 		};
 
 
