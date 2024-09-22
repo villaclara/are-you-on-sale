@@ -8,7 +8,7 @@ namespace CoreTests.RepositoryTests;
 public class AddProductTests
 {
 	[Fact]
-	public async Task AddProductToPostGres_ReturnVoid()
+	public async Task AddProductToPostGres_ReturnProduct()
 	{
 		// Arrange
 		var ctx = new ApplicationDBContext();
@@ -32,6 +32,7 @@ public class AddProductTests
 
 		// Assert
 		Assert.NotNull(result);
+		Assert.IsType<Product>(result);
 		Assert.Equivalent(product, result);
 
 	}
