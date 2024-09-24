@@ -1,24 +1,77 @@
 ﻿using Core.Interfaces;
+using Core.Repository.Interfaces;
 using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Services;
 
-public class TrackProductService : ITrackProductService
+public class TrackProductService(IProductRepository productRepository, IProductBaseService productBaseService) : ITrackProductService
 {
-	public event Action<Product> ProductPriceChanged;
+	private readonly IProductRepository _productRepository = productRepository;
+	private readonly IProductBaseService _productBaseService = productBaseService;
 
-	public Task DoPriceCheckAllProducts()
+	public event Action<Product>? ProductPriceChanged;
+
+	public async Task DoPriceCheckAllProducts()
 	{
-		throw new NotImplementedException();
+		var products = _productRepository.GetAllProducts();
+		foreach (var product in products)
+		{
+			// Get ProductBase from the OriginShop
+			var baseProduct = await _productBaseService.GetProductBaseFromOriginAsync(product.OriginType, product.OrinigLink);
+
+			// Compare baseProduct.CurrentPrice with product.CurrentPrice
+			if (baseProduct != null)
+			{
+				if (baseProduct.CurrentPrice < product.CurrentPrice)
+				{
+					await _productRepository.UpdateProductAsync(new()
+					{
+						Id = product.Id,
+						CreatedAtDate = product.CreatedAtDate,
+						CurrentPrice = baseProduct.CurrentPrice,
+						LastCheckedDate = DateTime.Now.ToUniversalTime(),
+						Name = product.Name,
+						OriginPrice = baseProduct.OriginPrice,
+						OriginType = product.OriginType,
+						OrinigLink = product.OrinigLink,
+						UserId = product.UserId,
+						SalePercent = (int)(baseProduct.OriginPrice - (baseProduct.CurrentPrice * 100 / baseProduct.OriginPrice))
+					});
+
+					// Call the Event if the product.CurrentPrice is lower than was in the DB
+					ProductPriceChanged?.Invoke(product);
+				}
+			}
+		}
 	}
 
-	public Task DoPriceCheckForSingleProduct(Product product)
+	public async Task DoPriceCheckForSingleProduct(Product product)
 	{
-		throw new NotImplementedException();
+		// Get ProductBase from the OriginShop
+		var baseProduct = await _productBaseService.GetProductBaseFromOriginAsync(product.OriginType, product.OrinigLink);
+
+		// Compare baseProduct.CurrentPrice with product.CurrentPrice
+		if (baseProduct != null)
+		{
+			if (baseProduct.CurrentPrice < product.CurrentPrice)
+			{
+				await _productRepository.UpdateProductAsync(new()
+				{
+					Id = product.Id,
+					CreatedAtDate = product.CreatedAtDate,
+					CurrentPrice = baseProduct.CurrentPrice,
+					LastCheckedDate = DateTime.Now.ToUniversalTime(),
+					Name = product.Name,
+					OriginPrice = baseProduct.OriginPrice,
+					OriginType = product.OriginType,
+					OrinigLink = product.OrinigLink,
+					UserId = product.UserId,
+					SalePercent = (int)(baseProduct.OriginPrice - (baseProduct.CurrentPrice * 100 / baseProduct.OriginPrice))
+				});
+
+				// Call the Event if the product.CurrentPrice is lower than was in the DB
+				ProductPriceChanged?.Invoke(product);
+			}
+		}
 	}
 }

@@ -21,7 +21,11 @@ public class ApplicationDBContext : DbContext
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		optionsBuilder.UseNpgsql(_connectionString);
-
+		// Used for Tests which use InMemoryDatabase (as not possible to use NpgSql and InMemoryDb simultaneously).
+		// Might be good idea to re-write later.
+		if (!optionsBuilder.IsConfigured)
+		{
+			optionsBuilder.UseNpgsql(_connectionString);
+		}
 	}
 }

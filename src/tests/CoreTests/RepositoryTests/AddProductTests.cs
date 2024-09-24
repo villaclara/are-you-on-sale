@@ -1,6 +1,6 @@
 ﻿using Core.Repository.Interfaces;
 using Core.Repository.Services;
-using DB.DB;
+using CoreTests.Helpers;
 using Models.Entities;
 
 namespace CoreTests.RepositoryTests;
@@ -11,7 +11,7 @@ public class AddProductTests
 	public async Task AddProductToPostGres_ReturnProduct()
 	{
 		// Arrange
-		var ctx = new ApplicationDBContext();
+		var ctx = await GetAppContext.GetAppContextDbInMemory();
 		IProductRepository productRepository = new ProductRepository(ctx);
 		var product = new Product()
 		{
