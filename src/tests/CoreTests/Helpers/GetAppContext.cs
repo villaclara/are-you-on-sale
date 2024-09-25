@@ -6,12 +6,12 @@ namespace CoreTests.Helpers;
 
 public static class GetAppContext
 {
-	public static async Task<ApplicationDBContext> GetAppContextDbInMemory()
+	public static async Task<ApplicationDbContext> GetAppContextDbInMemoryAsync()
 	{
-		var options = new DbContextOptionsBuilder<ApplicationDBContext>()
+		var options = new DbContextOptionsBuilder<ApplicationDbContext>()
 			.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
 
-		var ctx = new ApplicationDBContext(options);
+		var ctx = new ApplicationDbContext(options);
 		ctx.Database.EnsureCreated();
 
 		if (!await ctx.Products.AnyAsync())

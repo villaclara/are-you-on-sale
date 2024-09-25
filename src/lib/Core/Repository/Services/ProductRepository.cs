@@ -5,9 +5,9 @@ using Serilog;
 
 namespace Core.Repository.Services;
 
-public class ProductRepository(ApplicationDBContext ctx) : IProductRepository
+public class ProductRepository(ApplicationDbContext ctx) : IProductRepository
 {
-	private readonly ApplicationDBContext _ctx = ctx;
+	private readonly ApplicationDbContext _ctx = ctx;
 
 	public async Task<Product?> CreateProductAsync(Product product)
 	{

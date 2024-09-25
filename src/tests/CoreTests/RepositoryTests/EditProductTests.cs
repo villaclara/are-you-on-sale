@@ -1,4 +1,5 @@
-﻿using Core.Repository.Services;
+﻿using Core.Helpers;
+using Core.Repository.Services;
 using CoreTests.Helpers;
 
 namespace CoreTests.RepositoryTests;
@@ -11,14 +12,12 @@ public class EditProductTests
 	{
 		// Arrange 
 		var pId = Guid.Parse(productId);
-		var ctx = await GetAppContext.GetAppContextDbInMemory();
+		var ctx = await GetAppContext.GetAppContextDbInMemoryAsync();
 		var productRepository = new ProductRepository(ctx);
 		var product = productRepository.GetProductById(pId);
 
 		// Act
-		product.Name = "TestName1_Updated";
-		product.CurrentPrice = 10;
-		product.SalePercent = 90;
+		product = product!.NewProductWithUpdatedValues(name: "TestName1_Updated", currentPrice: 10, salePercent: 90);
 		var result = await productRepository.UpdateProductAsync(product);
 
 		// Assert

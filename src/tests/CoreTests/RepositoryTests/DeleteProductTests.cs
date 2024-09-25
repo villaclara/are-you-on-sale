@@ -11,7 +11,7 @@ public class DeleteProductTests
 	{
 		// Arrange 
 		var pId = Guid.Parse(productId);
-		var ctx = await GetAppContext.GetAppContextDbInMemory();
+		var ctx = await GetAppContext.GetAppContextDbInMemoryAsync();
 		var productRepository = new ProductRepository(ctx);
 
 		// Act

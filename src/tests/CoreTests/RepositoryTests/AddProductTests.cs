@@ -11,7 +11,7 @@ public class AddProductTests
 	public async Task AddProductToPostGres_ReturnProduct()
 	{
 		// Arrange
-		var ctx = await GetAppContext.GetAppContextDbInMemory();
+		var ctx = await GetAppContext.GetAppContextDbInMemoryAsync();
 		IProductRepository productRepository = new ProductRepository(ctx);
 		var product = new Product()
 		{

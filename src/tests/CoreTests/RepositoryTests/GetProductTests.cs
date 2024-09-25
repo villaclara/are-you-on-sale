@@ -11,7 +11,7 @@ public class GetProductTests
 	public void GetAllProducts_ReturnsIEnumrableProduct()
 	{
 		// Arrange
-		var ctx = new ApplicationDBContext();
+		var ctx = new ApplicationDbContext();
 		IProductRepository productRepository = new ProductRepository(ctx);
 		List<Product> expected = [
 			new Product()
@@ -43,7 +43,7 @@ public class GetProductTests
 	public void GetProductById_ReturnsProduct(string id)
 	{
 		// Arrange
-		var ctx = new ApplicationDBContext();
+		var ctx = new ApplicationDbContext();
 		IProductRepository productRepository = new ProductRepository(ctx);
 		var productId = Guid.Parse(id);
 		var expected = new Product()

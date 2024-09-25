@@ -3,17 +3,17 @@ using Models.Entities;
 
 namespace DB.DB;
 
-public class ApplicationDBContext : DbContext
+public class ApplicationDbContext : DbContext
 {
 	private readonly string _connectionString = "Host=localhost;Port=5432;Database=testdbAYOS;Username=postgres;Password=postgres";
 	public DbSet<Product> Products { get; set; } = null!;
 
-	public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 	{
 
 	}
 
-	public ApplicationDBContext()
+	public ApplicationDbContext()
 	{
 		Database.EnsureCreated();
 
