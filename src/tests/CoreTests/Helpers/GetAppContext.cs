@@ -17,8 +17,7 @@ public static class GetAppContext
 		if (!await ctx.Products.AnyAsync())
 		{
 			await ctx.AddRangeAsync(
-				new[]
-				{
+				[
 					new Product()
 					{
 						Name = @"TestName1",
@@ -58,7 +57,7 @@ public static class GetAppContext
 						SalePercent = 0,
 						UserId = 1
 					},
-				});
+				]);
 
 			await ctx.SaveChangesAsync();
 		}
