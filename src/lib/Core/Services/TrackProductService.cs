@@ -1,7 +1,9 @@
-﻿using Core.Helpers;
+﻿using Core.EventArgs;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Repository.Interfaces;
 using Models.Entities;
+using Models.Enums;
 
 namespace Core.Services;
 
@@ -11,6 +13,8 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 	private readonly IProductBaseService _productBaseService = productBaseService;
 
 	public event Action<Product>? ProductPriceChanged;
+
+	public event EventHandler<ProductChangedEventArgs>? ProductChanged;
 
 	public async Task DoPriceCheckAllProductsAsync()
 	{
@@ -25,24 +29,66 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 		// Get ProductBase from the OriginShop
 		var baseProduct = await _productBaseService.GetProductBaseFromOriginAsync(product.OriginType, product.OrinigLink);
 
-		// Compare baseProduct.CurrentPrice with product.CurrentPrice
-		if (baseProduct != null)
+		// Only return here because _productBaseService handles when the product was not retrieved.
+		if (baseProduct == null)
 		{
-			if (baseProduct.CurrentPrice < product.CurrentPrice)
-			{
-				int sale = (int)(baseProduct.OriginPrice - (baseProduct.CurrentPrice * 100 / baseProduct.OriginPrice));
-				var newProd = product.NewProductWithUpdatedValues(currentPrice: baseProduct.CurrentPrice, originPrice: baseProduct.OriginPrice, salePercent: sale);
-				await _productRepository.UpdateProductAsync(newProd);
-
-				// Call the Event if the product.CurrentPrice is lower than was in the DB
-				OnProductPriceChanged(product);
-			}
+			return;
 		}
+
+		var whatChanged = WhatProductFieldChanged.None;
+
+		// 1. Compare base prices and do stuff
+		if (baseProduct.OriginPrice != product.OriginPrice)
+		{
+			whatChanged = WhatProductFieldChanged.OriginPrice;
+
+			var newProd = product.NewProductWithUpdatedValues(originPrice: baseProduct.OriginPrice);
+			await _productRepository.UpdateProductAsync(newProd);
+			OnProductChanged(new ProductChangedEventArgs(
+				product.Id,
+				product.UserId,
+				whatChanged,
+				product.OriginPrice,
+				baseProduct.OriginPrice));
+		}
+
+		// 2. Compare Current Prices and do stuff
+		if (baseProduct.CurrentPrice != product.CurrentPrice && baseProduct.CurrentPrice != baseProduct.OriginPrice)
+		{
+			int sale = (int)(baseProduct.OriginPrice - (baseProduct.CurrentPrice * 100 / baseProduct.OriginPrice));
+			var newProd = product.NewProductWithUpdatedValues(currentPrice: baseProduct.CurrentPrice, originPrice: baseProduct.OriginPrice, salePercent: sale);
+			await _productRepository.UpdateProductAsync(newProd);
+
+			// Call the Event if the product.CurrentPrice is lower than was in the DB
+			OnProductPriceChanged(product);
+			OnProductChanged(new ProductChangedEventArgs(
+				product.Id,
+				product.UserId,
+				Models.Enums.WhatProductFieldChanged.CurrentPrice,
+				baseProduct.CurrentPrice,
+				baseProduct.OriginPrice));
+		}
+
+		//if (whatChanged != WhatProductFieldChanged.None)
+		//{
+		//	OnProductChanged(new ProductChangedEventArgs(
+		//		product.Id,
+		//		product.UserId,
+		//		whatChanged,
+		//		baseProduct.CurrentPrice,
+		//		baseProduct.OriginPrice));
+		//}
+
 	}
 
 	protected virtual void OnProductPriceChanged(Product product)
 	{
 		ProductPriceChanged?.Invoke(product);
+	}
+
+	protected virtual void OnProductChanged(ProductChangedEventArgs args)
+	{
+		ProductChanged?.Invoke(this, args);
 	}
 
 }
