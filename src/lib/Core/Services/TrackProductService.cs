@@ -12,7 +12,6 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 	private readonly IProductRepository _productRepository = productRepository;
 	private readonly IProductBaseService _productBaseService = productBaseService;
 
-	public event Action<Product>? ProductPriceChanged;
 
 	public event EventHandler<ProductChangedEventArgs>? ProductChanged;
 
@@ -37,6 +36,17 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 
 		var whatChanged = WhatProductFieldChanged.None;
 
+		if (baseProduct.Name != product.Name)
+		{
+			whatChanged = WhatProductFieldChanged.All;
+			OnProductChanged(new ProductChangedEventArgs(
+				product.Id,
+				product.UserId,
+				whatChanged,
+				oldValue: product.Name,
+				newValue: baseProduct.Name));
+		}
+
 		// 1. Compare base prices and do stuff
 		if (baseProduct.OriginPrice != product.OriginPrice)
 		{
@@ -60,7 +70,6 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 			await _productRepository.UpdateProductAsync(newProd);
 
 			// Call the Event if the product.CurrentPrice is lower than was in the DB
-			OnProductPriceChanged(product);
 			OnProductChanged(new ProductChangedEventArgs(
 				product.Id,
 				product.UserId,
@@ -79,11 +88,6 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 		//		baseProduct.OriginPrice));
 		//}
 
-	}
-
-	protected virtual void OnProductPriceChanged(Product product)
-	{
-		ProductPriceChanged?.Invoke(product);
 	}
 
 	protected virtual void OnProductChanged(ProductChangedEventArgs args)

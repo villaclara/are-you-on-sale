@@ -1,9 +1,25 @@
+using Core.Interfaces;
+using Core.Repository.Interfaces;
+using Core.Repository.Services;
+using Core.Services;
+using DB.DB;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var conString = builder.Configuration.GetConnectionString("Npgsql_ConnecionString");
+builder.Services.AddDbContext<ApplicationDbContext>(
+	options => options.UseNpgsql(conString));
+
+builder.Services.AddScoped<IProductBaseService, ProductBaseService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ITrackProductService, TrackProductService>();
 
 var app = builder.Build();
 
@@ -34,6 +50,13 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.MapGet("/getall", (IServiceProvider sp) =>
+{
+	var products = sp.GetRequiredService<IProductService>().GetAllProducts();
+	return products;
+});
+
 
 app.Run();
 

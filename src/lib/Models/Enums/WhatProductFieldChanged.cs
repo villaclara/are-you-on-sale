@@ -7,5 +7,6 @@ public enum WhatProductFieldChanged
 {
 	None = 0,
 	CurrentPrice = 1,
-	OriginPrice = 2
+	OriginPrice = 2,
+	All = 999
 }

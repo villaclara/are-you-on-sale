@@ -1,9 +1,5 @@
-﻿using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core.EventArgs;
+using Models.Entities;
 
 namespace Core.Interfaces;
 
@@ -12,11 +8,11 @@ namespace Core.Interfaces;
 /// </summary>
 public interface ITrackProductService
 {
-	
+
 	/// <summary>
 	/// Event is raised when the <see cref="ProductBase"/> price has been changed.
 	/// </summary>
-	event Action<Product> ProductPriceChanged;
+	event EventHandler<ProductChangedEventArgs> ProductChanged;
 
 	/// <summary>
 	/// Get all products from db and perform actual price check, invoking <see cref="ProductPriceChanged"/> event in that case.
