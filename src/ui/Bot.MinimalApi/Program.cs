@@ -1,9 +1,13 @@
+using Bot.MinimalApi.Services;
 using Core.Interfaces;
 using Core.Repository.Interfaces;
 using Core.Repository.Services;
 using Core.Services;
 using DB.DB;
 using Microsoft.EntityFrameworkCore;
+using Telegram.Bot;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +24,16 @@ builder.Services.AddScoped<IProductBaseService, ProductBaseService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ITrackProductService, TrackProductService>();
+
+
+builder.Services.AddScoped<IUpdateHandler, UpdateHandler>();
+
+var token = builder.Configuration["BotToken"]!;             // set your bot token in appsettings.json
+var webhookUrl = builder.Configuration["BotWebhookUrl"]!;   // set your bot webhook public url in appsettings.json
+
+//builder.Services.ConfigureTelegramBot<Microsoft.AspNetCore.Http.Json.JsonOptions>(opt => opt.SerializerOptions);
+builder.Services.AddHttpClient("tgwebhook").RemoveAllLoggers().AddTypedClient(httpClient => new TelegramBotClient(token, httpClient));
+
 
 var app = builder.Build();
 
@@ -57,10 +71,24 @@ app.MapGet("/getall", (IServiceProvider sp) =>
 	return products;
 });
 
+app.MapGet("/bot/setWebhook", async (TelegramBotClient bot) => { await bot.SetWebhookAsync(webhookUrl); Console.WriteLine($"{webhookUrl} url"); return $"Webhook set to {webhookUrl}"; });
+app.MapPost("/bot", (Update update, TelegramBotClient bot, IUpdateHandler handler, CancellationToken cts) => OnUpdate);
+
 
 app.Run();
+
+
+
+
+async void OnUpdate(Update update, TelegramBotClient bot, IUpdateHandler handler, CancellationToken cts)
+{
+	await handler.HandleUpdateAsync(bot, update, cts);
+}
+
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
 	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+
