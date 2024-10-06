@@ -1,5 +1,6 @@
 using Bot.MinimalApi.Interfaces;
 using Bot.MinimalApi.Services;
+using Bot.MinimalApi.UserCommands;
 using Core.Interfaces;
 using Core.Repository.Interfaces;
 using Core.Repository.Services;
@@ -23,11 +24,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddScoped<IProductBaseService, ProductBaseService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 builder.Services.AddScoped<ITrackProductService, TrackProductService>();
 
 
-builder.Services.AddSingleton<IBotUpdateHandler, BotUpdateHandler>();
+//builder.Services.AddSingleton<IBotUpdateHandler, BotUpdateHandler>();
+//builder.Services.AddSingleton<IUserCommandFactory, UserCommandFactory>();
 
+
+builder.Services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
+builder.Services.AddScoped<IUserCommandFactory, UserCommandFactory>();
 
 var token = builder.Configuration["BotToken"]!;             // set your bot token in appsettings.json
 var webhookUrl = builder.Configuration["BotWebhookUrl"]!;   // set your bot webhook public url in appsettings.json
@@ -71,8 +77,8 @@ app.Run();
 
 async Task OnUpdate(Update update, TelegramBotClient bot, IBotUpdateHandler handler)
 {
-	//await handler.HandleUpdateAsync(bot, update, CancellationToken.None);
-	await bot.SendTextMessageAsync(update.Message.Chat.Id, "text");
+	await handler.HandleUpdateAsync(bot, update, new CancellationToken());
+	//await bot.SendTextMessageAsync(update.Message.Chat.Id, "text");
 }
 
 

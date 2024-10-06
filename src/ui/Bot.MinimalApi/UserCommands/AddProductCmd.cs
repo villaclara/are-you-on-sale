@@ -6,6 +6,8 @@ public class AddProductCmd : IUserCommand
 
 	public Task ExecuteMeAsync()
 	{
-		throw new NotImplementedException();
+		Console.WriteLine("ADDPRODUCTCMD");
+		return Task.CompletedTask;
 	}
 }
+

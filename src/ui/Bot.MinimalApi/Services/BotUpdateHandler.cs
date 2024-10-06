@@ -5,34 +5,43 @@ using Telegram.Bot.Types;
 
 namespace Bot.MinimalApi.Services;
 
-public class BotUpdateHandler(ILogger<BotUpdateHandler> logger) : IBotUpdateHandler
+public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFactory commandFactory) : IBotUpdateHandler
 {
 	private readonly ILogger<BotUpdateHandler> _logger = logger;
+	private readonly IUserCommandFactory _commandFactory = commandFactory;
 
 	public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken ct)
 	{
-		_logger.LogInformation("HANDLE UPDATE");
+		_logger.LogInformation($"HANDLE UPDATE. message - {update?.Message?.Text}, time - {update?.Message?.Date}");
 		await (update switch
 		{
-			{ Message: { } message } => OnMessageReceived(message),
+			{ Message: { } message } => OnMessageReceived(message, botClient),
 			_ => throw new NotImplementedException()
 		});
 
 	}
 
-	private async Task OnMessageReceived(Message message)
+	private async Task OnMessageReceived(Message message, ITelegramBotClient bot)
 	{
 		if (message.Text is not { } messageText)
-			return;
-
-		IUserCommand cmd = (messageText.Split(' ')[0] switch
 		{
-			"/add" => new AddProductCmd(),
-			"/start" => new GetAllProductsCmd(),
-			_ => throw new NotImplementedException()
-		});
+			_logger.LogError("message.Text is not messageText");
+			return;
+		}
+		if (message.From == null)
+		{
+			_logger.LogError("message.From is null");
+			return;
+		}
+
+		IUserCommand cmd = _commandFactory.CreateUserCmd(messageText, message.From.Id);
 
 		await cmd.ExecuteMeAsync();
 
+
+
 	}
+
+
+
 }
