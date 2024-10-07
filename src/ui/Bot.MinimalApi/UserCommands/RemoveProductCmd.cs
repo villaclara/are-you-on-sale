@@ -1,9 +1,15 @@
 ﻿
+using Core.Interfaces;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+
 namespace Bot.MinimalApi.UserCommands;
 
-public class RemoveProductCmd : IUserCommand
+public class RemoveProductCmd(long chatId, TelegramBotClient bot, IProductService productService) : IUserCommand
 {
-	public Task ExecuteMeAsync()
+	public long ChatId => chatId;
+
+	public Task<Message> ExecuteMeAsync()
 	{
 		throw new NotImplementedException();
 	}

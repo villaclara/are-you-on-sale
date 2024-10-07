@@ -34,7 +34,7 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 			return;
 		}
 
-		IUserCommand cmd = _commandFactory.CreateUserCmd(messageText, message.From.Id);
+		IUserCommand cmd = _commandFactory.CreateUserCmd(message);
 
 		await cmd.ExecuteMeAsync();
 

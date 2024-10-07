@@ -1,15 +1,15 @@
 ﻿
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Bot.MinimalApi.UserCommands;
 
 public class UnknownCmd(long chatId, ITelegramBotClient bot) : IUserCommand
 {
-	private readonly ITelegramBotClient _bot = bot;
-	private readonly long _chatId = chatId;
-	public async Task ExecuteMeAsync()
+	public long ChatId => chatId;
+	public async Task<Message> ExecuteMeAsync()
 	{
-		await _bot.SendTextMessageAsync(_chatId, "Unknown command.");
+		return await bot.SendTextMessageAsync(ChatId, "Unknown command.");
 	}
 
 }

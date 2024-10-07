@@ -3,5 +3,6 @@
 
 public interface IUserCommand
 {
-	Task ExecuteMeAsync();
+	long ChatId { get; }
+	Task<Telegram.Bot.Types.Message> ExecuteMeAsync();
 }

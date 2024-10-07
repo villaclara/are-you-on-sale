@@ -1,19 +1,18 @@
 ﻿
 using Core.Interfaces;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Bot.MinimalApi.UserCommands;
 
 public class GetAllProductsCmd(long chatId, IProductService productService, ITelegramBotClient bot) : IUserCommand
 {
-	private readonly IProductService _productService = productService;
-	private readonly ITelegramBotClient _bot = bot;
-	private readonly long _chatId = chatId;
-	public async Task ExecuteMeAsync()
+	public long ChatId => chatId;
+	public async Task<Message> ExecuteMeAsync()
 	{
-		var products = productService.GetProductsForUser(_chatId);
+		var products = productService.GetProductsForUser(ChatId);
 
-		await bot.SendTextMessageAsync(_chatId, products.Count().ToString());
+		return await bot.SendTextMessageAsync(ChatId, products.Count().ToString());
 		//bot.SendTextMessageAsync(_chatId, "getallcmd".ToString());
 	}
 }

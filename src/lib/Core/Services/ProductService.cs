@@ -2,16 +2,10 @@
 using Core.Repository.Interfaces;
 using Models.Entities;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Services;
 
-public class ProductService(ITrackProductService trackProductService, 
+public class ProductService(ITrackProductService trackProductService,
 	IProductRepository productRepository) : IProductService
 {
 	public ITrackProductService TrackProductService { get; } = trackProductService;
@@ -29,8 +23,8 @@ public class ProductService(ITrackProductService trackProductService,
 			OriginType = product.OriginType,
 			CurrentPrice = product.OriginPrice,
 			OrinigLink = product.OrinigLink,
-			CreatedAtDate = DateTime.Now,
-			LastCheckedDate = DateTime.Now,
+			CreatedAtDate = DateTime.Now.ToUniversalTime(),
+			LastCheckedDate = DateTime.Now.ToUniversalTime(),
 			SalePercent = 0,
 			UserId = userId
 		};
@@ -41,12 +35,12 @@ public class ProductService(ITrackProductService trackProductService,
 	public async Task DeleteProductOfUserAsync(long userId, Guid productId)
 	{
 		var prod = _productRepository.GetProductById(productId);
-		if(prod == null || prod.UserId != userId)
+		if (prod == null || prod.UserId != userId)
 		{
 			Log.Error("{@Method} - Product not found/Product does not belong to user.", nameof(DeleteProductOfUserAsync));
 			throw new ArgumentException("Product not found/Product does not belong to user.");
 		}
-			
+
 		await _productRepository.DeleteProductAsync(productId);
 	}
 
@@ -58,7 +52,7 @@ public class ProductService(ITrackProductService trackProductService,
 	public Product? GetProductByIdForUser(Guid productId, long userId)
 	{
 		var prod = _productRepository.GetProductById(productId);
-		if( prod == null || prod.UserId != userId)
+		if (prod == null || prod.UserId != userId)
 		{
 			Log.Warning("{@Method} - Product({@prod}) for user({@user}) not found.", nameof(GetProductByIdForUser), productId, userId);
 			return default;

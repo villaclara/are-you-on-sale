@@ -1,6 +1,8 @@
-﻿namespace Bot.MinimalApi.UserCommands;
+﻿using Telegram.Bot.Types;
+
+namespace Bot.MinimalApi.UserCommands;
 
 public interface IUserCommandFactory
 {
-	IUserCommand CreateUserCmd(string cmd, long userId);
+	IUserCommand CreateUserCmd(Message message);
 }
