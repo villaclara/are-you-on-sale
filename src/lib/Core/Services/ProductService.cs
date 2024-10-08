@@ -12,7 +12,7 @@ public class ProductService(ITrackProductService trackProductService,
 
 	private readonly IProductRepository _productRepository = productRepository;
 
-	public async Task AddProductToUserAsync(long userId, ProductBase product)
+	public async Task<Product?> AddProductToUserAsync(long userId, ProductBase product)
 	{
 		Log.Information("{@Method} - add product (@product) to userid(@userid)", nameof(AddProductToUserAsync), product, userId);
 		var fullProduct = new Product()
@@ -29,7 +29,7 @@ public class ProductService(ITrackProductService trackProductService,
 			UserId = userId
 		};
 
-		await _productRepository.CreateProductAsync(fullProduct);
+		return await _productRepository.CreateProductAsync(fullProduct);
 	}
 
 	public async Task DeleteProductOfUserAsync(long userId, Guid productId)

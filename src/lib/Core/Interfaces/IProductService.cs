@@ -1,9 +1,4 @@
 ﻿using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Interfaces;
 
@@ -44,7 +39,7 @@ public interface IProductService
 	/// <param name="userId">Id of user to add product.</param>
 	/// <param name="product"><see cref="ProductBase"/> object to add.</param>
 	/// <returns>Task.</returns>
-	Task AddProductToUserAsync(long  userId, ProductBase product);
+	Task<Product?> AddProductToUserAsync(long userId, ProductBase product);
 
 	/// <summary>
 	/// Deletes the selected <see cref="Product"/> object from userId.

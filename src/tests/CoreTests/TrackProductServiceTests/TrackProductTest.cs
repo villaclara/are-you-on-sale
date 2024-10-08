@@ -1,4 +1,5 @@
-﻿using Core.Repository.Services;
+﻿using Core.EventArgs;
+using Core.Repository.Services;
 using Core.Services;
 using DB.DB;
 using Models.Entities;
@@ -33,7 +34,7 @@ public class TrackProductTest
 
 		// Act
 		bool eventRaised = false;
-		trackService.ProductPriceChanged += (Product prod) => eventRaised = true;
+		trackService.ProductChanged += (object? obj, ProductChangedEventArgs args) => eventRaised = true;
 		await trackService.DoPriceCheckForSingleProductAsync(givenProduct);
 
 		// Assert

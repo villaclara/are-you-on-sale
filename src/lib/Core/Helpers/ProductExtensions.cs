@@ -34,46 +34,26 @@ public static class ProductExtensions
 		OriginType originType = OriginType.None
 		)
 	{
-		if (id != default)
-		{
-			product.Id = id;
-		}
-		if (name != null)
-		{
-			product.Name = name;
-		}
-		if (userId != default)
-		{
-			product.UserId = userId;
-		}
-		if (currentPrice != default)
-		{
-			product.CurrentPrice = currentPrice;
-		}
-		if (originPrice != default)
-		{
-			product.OriginPrice = originPrice;
-		}
-		if (salePercent != default)
-		{
-			product.SalePercent = salePercent;
-		}
-		if (originLink != null)
-		{
-			product.OrinigLink = originLink;
-		}
-		if (createdAt != default)
-		{
-			product.CreatedAtDate = createdAt;
-		}
-		if (lastCheckedAt != default)
-		{
-			product.LastCheckedDate = lastCheckedAt;
-		}
-		if (originType != OriginType.None)
-		{
-			product.OriginType = originType;
-		}
+		product.Id = id != default ? id : product.Id;
+
+		product.Name = name != null ? name : product.Name;
+
+		product.UserId = userId != default ? userId : product.UserId;
+
+		product.CurrentPrice = currentPrice != default ? currentPrice : product.CurrentPrice;
+
+		product.OriginPrice = originPrice != default ? originPrice : product.OriginPrice;
+
+		product.SalePercent = salePercent != default ? salePercent : product.SalePercent;
+
+		product.OrinigLink = originLink != null ? originLink : product.OrinigLink;
+
+		product.CreatedAtDate = createdAt != default ? createdAt : product.CreatedAtDate;
+
+		product.LastCheckedDate = lastCheckedAt != default ? lastCheckedAt : product.LastCheckedDate;
+
+		product.OriginType = originType != OriginType.None ? originType : product.OriginType;
+
 		return product;
 	}
 

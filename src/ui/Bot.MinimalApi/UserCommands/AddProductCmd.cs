@@ -1,4 +1,5 @@
 ﻿
+using Bot.MinimalApi.Extensions;
 using Core.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -28,8 +29,15 @@ public class AddProductCmd(long chatId, string message, TelegramBotClient bot, I
 			return await bot.SendTextMessageAsync(ChatId, "Failed to get the link, please provide correct one.");
 		}
 
-		await productService.AddProductToUserAsync(ChatId, product);
-		return await bot.SendTextMessageAsync(ChatId, $"Product added. {product.Name}");
+		var added = await productService.AddProductToUserAsync(ChatId, product);
+
+		if (added == null)
+		{
+			return await bot.SendTextMessageAsync(ChatId, $"Error when adding product. Try again.");
+		}
+
+
+		return await bot.SendTextMessageAsync(ChatId, added.ToHtml_ProductFull(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
 	}
 }
 

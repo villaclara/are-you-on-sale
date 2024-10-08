@@ -64,7 +64,7 @@ app.MapGet("/getall", (IServiceProvider sp) =>
 
 app.MapGet("/bot/setWebhook", async (TelegramBotClient bot) =>
 {
-	await bot.SetWebhookAsync(webhookUrl, allowedUpdates: []);
+	await bot.SetWebhookAsync(webhookUrl, allowedUpdates: [], dropPendingUpdates: true);
 	return $"Webhook set to {webhookUrl}";
 });
 app.MapPost("/bot", OnUpdate);
