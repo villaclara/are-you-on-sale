@@ -37,9 +37,11 @@ public static class MessageFormatHtmlExtensions
 		int index = 1;
 		foreach (var product in products)
 		{
-			sb.AppendLine($@"{index} - {product.Name}");
+			sb.AppendLine($@"{index}. {product.Name}");
 			index++;
 		}
+
+		sb.AppendLine().AppendLine("Вибери товар:");
 
 		return sb.ToString();
 	}

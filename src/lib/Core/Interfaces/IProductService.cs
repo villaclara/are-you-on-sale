@@ -47,5 +47,5 @@ public interface IProductService
 	/// <param name="userId">Id of user to delete product.</param>
 	/// <param name="productId"><see cref="Product"/> object to remove from db.</param>
 	/// <returns>Task.</returns>
-	Task DeleteProductOfUserAsync(long userId, Guid productId);
+	Task<bool> DeleteProductOfUserAsync(long userId, Guid productId);
 }

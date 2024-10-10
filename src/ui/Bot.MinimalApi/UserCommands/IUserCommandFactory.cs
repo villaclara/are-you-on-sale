@@ -4,5 +4,6 @@ namespace Bot.MinimalApi.UserCommands;
 
 public interface IUserCommandFactory
 {
-	IUserCommand CreateUserCmd(Message message);
+	IUserCommand CreateUserCmdFromMessage(Message message);
+	IUserCommand CreateUserCmdFromCallbackQuery(CallbackQuery query);
 }

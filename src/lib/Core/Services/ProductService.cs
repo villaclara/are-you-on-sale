@@ -32,7 +32,7 @@ public class ProductService(ITrackProductService trackProductService,
 		return await _productRepository.CreateProductAsync(fullProduct);
 	}
 
-	public async Task DeleteProductOfUserAsync(long userId, Guid productId)
+	public async Task<bool> DeleteProductOfUserAsync(long userId, Guid productId)
 	{
 		var prod = _productRepository.GetProductById(productId);
 		if (prod == null || prod.UserId != userId)
@@ -41,7 +41,7 @@ public class ProductService(ITrackProductService trackProductService,
 			throw new ArgumentException("Product not found/Product does not belong to user.");
 		}
 
-		await _productRepository.DeleteProductAsync(productId);
+		return await _productRepository.DeleteProductAsync(productId);
 	}
 
 	public IEnumerable<Product> GetAllProducts()

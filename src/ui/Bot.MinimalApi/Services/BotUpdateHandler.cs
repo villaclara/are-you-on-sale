@@ -12,10 +12,10 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 
 	public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken ct)
 	{
-		_logger.LogInformation($"HANDLE UPDATE. message - {update?.Message?.Text}, time - {update?.Message?.Date}");
 		await (update switch
 		{
 			{ Message: { } message } => OnMessageReceived(message, botClient),
+			{ CallbackQuery: { } callbackQuery } => OnCallbackQueryReceived(callbackQuery, botClient),
 			_ => throw new NotImplementedException()
 		});
 
@@ -23,6 +23,8 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 
 	private async Task OnMessageReceived(Message message, ITelegramBotClient bot)
 	{
+		_logger.LogInformation("Message HANDLE - {message.Text}, {message.Date}", message.Text, message.Date);
+
 		if (message.Text is not { } messageText)
 		{
 			_logger.LogError("message.Text is not messageText");
@@ -34,13 +36,32 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 			return;
 		}
 
-		IUserCommand cmd = _commandFactory.CreateUserCmd(message);
+		IUserCommand cmd = _commandFactory.CreateUserCmdFromMessage(message);
 
 		await cmd.ExecuteMeAsync();
 
 
 
 	}
+
+	private async Task OnCallbackQueryReceived(CallbackQuery callbackQuery, ITelegramBotClient botClient)
+	{
+		_logger.LogInformation("CallbackQuery HANDLE - {callbackQuery.Data}", callbackQuery.Data);
+
+		// Necessary to react to callback by library. We will show nothing.
+		await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+
+		if (callbackQuery.Data == null || callbackQuery.Message == null)
+		{
+			_logger.LogError("callbackquery is empty.");
+			return;
+		}
+
+		IUserCommand cmd = _commandFactory.CreateUserCmdFromCallbackQuery(callbackQuery);
+
+		await cmd.ExecuteMeAsync();
+	}
+
 
 
 
