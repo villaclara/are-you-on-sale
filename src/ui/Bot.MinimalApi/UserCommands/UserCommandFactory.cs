@@ -1,6 +1,5 @@
 ﻿using Bot.MinimalApi.Utils;
 using Core.Interfaces;
-using Core.Repository.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -9,9 +8,7 @@ namespace Bot.MinimalApi.UserCommands;
 public class UserCommandFactory(
 	IProductBaseService productBaseService,
 	IProductService productService,
-	IProductRepository productRepository,
-	TelegramBotClient bot,
-	IServiceProvider sp) : IUserCommandFactory
+	TelegramBotClient bot) : IUserCommandFactory
 {
 	public IUserCommand CreateUserCmdFromMessage(Message message)
 	{
@@ -60,7 +57,7 @@ public class UserCommandFactory(
 	{
 		IUserCommand userCMD = query.Data!.Split(" ")[0] switch
 		{
-			// "/q_get"
+			// "/q_get_e"
 			ConstantCommands.GET_SINGLE_PRODUCT_CMD => new GetSingleProductCmd(
 				chatId: query.From.Id,
 				pId: Guid.Parse(query.Data.Split(" ")[1]),
@@ -68,27 +65,38 @@ public class UserCommandFactory(
 				productService,
 				bot),
 
-
-			// TODO - Edit message when received BACK command query instead of sending new one
-
 			// "/q_back_e"
-			ConstantCommands.BACK_TO_LIST_EDITMSG_CMD => new GetAllProductsCmd(
+			ConstantCommands.BACK_TO_LIST_EDIT_MSG_CMD => new GetAllProductsCmd(
 				chatId: query.From.Id,
 				productService,
 				bot,
 				editCurrentMessage: true,
 				messageId: query.Message!.MessageId),
 
-
 			// "/q_del"
-			ConstantCommands.DEL_SINGLE_PRODUCT_CMD => new RemoveProductCmd(
+			ConstantCommands.DEL_SINGLE_PRODUCT_CMD => new RemoveAskProductCmd(
 				chatId: query.From.Id,
 				pId: Guid.Parse(query.Data.Split(" ")[1]),
 				messageId: query.Message!.MessageId,
-				bot,
-				productService),
+				bot),
 
-			_ => throw new NotImplementedException()
+			// "/q_back_d"
+			ConstantCommands.BACK_TO_LIST_EDIT_MSG_W_DEL_CMD => new RemoveSureProductCmd(
+				chatId: query.From.Id,
+				pId: Guid.Parse(query.Data.Split(" ")[1]),
+				messageId: query.Message!.MessageId,
+				bot, productService),
+
+
+			// "/q_rstr_e"
+			ConstantCommands.RSTR_PRODUCT_CMD => new RestoreProductCmd(
+				chatId: query.From.Id,
+				pId: Guid.Parse(query.Data.Split(" ")[1]),
+				messageId: query.Message!.MessageId,
+				productService,
+				bot),
+
+			_ => new UnknownCmd(query.From!.Id, bot)
 		};
 
 		return userCMD;

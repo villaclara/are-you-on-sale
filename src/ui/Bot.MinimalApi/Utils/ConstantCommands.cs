@@ -20,7 +20,7 @@ public class ConstantCommands
 	/// <summary>
 	/// The callback query command. Product id (GUID) should be appended at the end of command after space.
 	/// </summary>
-	public const string GET_SINGLE_PRODUCT_CMD = @"/q_get";
+	public const string GET_SINGLE_PRODUCT_CMD = @"/q_get_e";
 
 	/// <summary>
 	/// The callback query command. Product id (GUID) should be appended at the end of command after space.
@@ -29,7 +29,20 @@ public class ConstantCommands
 
 	public const string BACK_TO_LIST_CMD = @"/q_back";
 
-	public const string BACK_TO_LIST_EDITMSG_CMD = @"/q_back_e";
+	/// <summary>
+	/// The callback query command. To return back to list and Edit the current message.
+	/// </summary>
+	public const string BACK_TO_LIST_EDIT_MSG_CMD = @"/q_back_e";
+
+	/// <summary>
+	/// The callback query command. To return back to list and edit the current message WITH deleting the product.
+	/// </summary>
+	public const string BACK_TO_LIST_EDIT_MSG_W_DEL_CMD = @"/q_back_d";
+
+	/// <summary>
+	/// The callback query command. To restore product and display info about it and edit the current message.
+	/// </summary>
+	public const string RSTR_PRODUCT_CMD = @"/q_rstr_e";
 
 	#endregion CallbackQuery Commands.
 }
