@@ -8,7 +8,8 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.MinimalApi.UserCommands;
 
-public class GetAllProductsCmd(long chatId, IProductService productService, ITelegramBotClient bot) : IUserCommand
+public class GetAllProductsCmd(long chatId, IProductService productService, ITelegramBotClient bot,
+	bool editCurrentMessage = false, int? messageId = null) : IUserCommand
 {
 	public long ChatId => chatId;
 	public async Task<Message> ExecuteMeAsync()
@@ -29,7 +30,16 @@ public class GetAllProductsCmd(long chatId, IProductService productService, ITel
 			index++;
 		}
 
+		if (editCurrentMessage && messageId != null)
+		{
+			return await bot.EditMessageTextAsync(
+				chatId: ChatId,
+				messageId: (int)messageId,
+				products.ToHtml_AllProductsToList(),
+				parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
+				replyMarkup: inlineKb);
+		}
+
 		return await bot.SendTextMessageAsync(ChatId, products.ToHtml_AllProductsToList(), parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: inlineKb);
-		//bot.SendTextMessageAsync(_chatId, "getallcmd".ToString());
 	}
 }

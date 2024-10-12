@@ -71,11 +71,13 @@ public class UserCommandFactory(
 
 			// TODO - Edit message when received BACK command query instead of sending new one
 
-			// "/q_back"
-			ConstantCommands.BACK_TO_LIST_CMD => new GetAllProductsCmd(
+			// "/q_back_e"
+			ConstantCommands.BACK_TO_LIST_EDITMSG_CMD => new GetAllProductsCmd(
 				chatId: query.From.Id,
 				productService,
-				bot),
+				bot,
+				editCurrentMessage: true,
+				messageId: query.Message!.MessageId),
 
 
 			// "/q_del"

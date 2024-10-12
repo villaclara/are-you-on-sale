@@ -31,7 +31,7 @@ public class GetSingleProductCmd(long chatId, Guid pId, int messageId, IProductS
 
 		inlineKb.AddButton(InlineKeyboardButton.WithCallbackData("Delete", ConstantCommands.DEL_SINGLE_PRODUCT_CMD + " " + product.Id))
 			.AddNewRow()
-			.AddButton(InlineKeyboardButton.WithCallbackData("Back", ConstantCommands.BACK_TO_LIST_CMD));
+			.AddButton(InlineKeyboardButton.WithCallbackData("Back", ConstantCommands.BACK_TO_LIST_EDITMSG_CMD));
 
 		return await bot.EditMessageTextAsync(
 			chatId: ChatId,

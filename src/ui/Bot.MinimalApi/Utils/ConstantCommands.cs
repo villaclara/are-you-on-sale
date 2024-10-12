@@ -29,5 +29,7 @@ public class ConstantCommands
 
 	public const string BACK_TO_LIST_CMD = @"/q_back";
 
+	public const string BACK_TO_LIST_EDITMSG_CMD = @"/q_back_e";
+
 	#endregion CallbackQuery Commands.
 }
