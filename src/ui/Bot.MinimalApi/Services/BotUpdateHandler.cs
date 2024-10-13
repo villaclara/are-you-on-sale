@@ -16,52 +16,76 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 		{
 			{ Message: { } message } => OnMessageReceived(message, botClient),
 			{ CallbackQuery: { } callbackQuery } => OnCallbackQueryReceived(callbackQuery, botClient),
-			_ => throw new NotImplementedException()
+			_ => UnknownUpdate(update, botClient)
 		});
-
 	}
+
+
 
 	private async Task OnMessageReceived(Message message, ITelegramBotClient bot)
 	{
-		_logger.LogInformation("Message HANDLE - {message.Text}, {message.Date}", message.Text, message.Date);
-
-		if (message.Text is not { } messageText)
+		try
 		{
-			_logger.LogError("message.Text is not messageText");
-			return;
+
+			_logger.LogInformation("Message HANDLE - {message.Text}, {message.Date}", message.Text, message.Date);
+
+			if (message.Text is not { } messageText)
+			{
+				_logger.LogError("message.Text is not messageText");
+				return;
+			}
+			if (message.From == null)
+			{
+				_logger.LogError("message.From is null");
+				return;
+			}
+
+			IUserCommand cmd = _commandFactory.CreateUserCmdFromMessage(message);
+
+			await cmd.ExecuteMeAsync();
+
 		}
-		if (message.From == null)
+		catch (Exception ex)
 		{
-			_logger.LogError("message.From is null");
-			return;
+			_logger.LogError("{Method} - Ex. {Exception}", nameof(OnMessageReceived), ex.Message);
+			await bot.SendTextMessageAsync(message.Chat.Id, "Помилка, спробуй ще раз.");
 		}
-
-		IUserCommand cmd = _commandFactory.CreateUserCmdFromMessage(message);
-
-		await cmd.ExecuteMeAsync();
-
 
 
 	}
 
-	private async Task OnCallbackQueryReceived(CallbackQuery callbackQuery, ITelegramBotClient botClient)
+	private async Task OnCallbackQueryReceived(CallbackQuery callbackQuery, ITelegramBotClient bot)
 	{
-		_logger.LogInformation("CallbackQuery HANDLE - {callbackQuery.Data}", callbackQuery.Data);
-
-		// Necessary to react to callback by library. We will show nothing.
-		await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-
-		if (callbackQuery.Data == null || callbackQuery.Message == null)
+		try
 		{
-			_logger.LogError("callbackquery is empty.");
-			return;
+
+			_logger.LogInformation("CallbackQuery HANDLE - {callbackQuery.Data}", callbackQuery.Data);
+
+			// Necessary to react to callback by library. We will show nothing.
+			await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+
+			if (callbackQuery.Data == null || callbackQuery.Message == null)
+			{
+				_logger.LogError("callbackquery is empty.");
+				return;
+			}
+
+			IUserCommand cmd = _commandFactory.CreateUserCmdFromCallbackQuery(callbackQuery);
+
+			await cmd.ExecuteMeAsync();
 		}
-
-		IUserCommand cmd = _commandFactory.CreateUserCmdFromCallbackQuery(callbackQuery);
-
-		await cmd.ExecuteMeAsync();
+		catch (Exception ex)
+		{
+			_logger.LogError("{Method} - Ex. {Exception}", nameof(OnMessageReceived), ex.Message);
+			await bot.SendTextMessageAsync(callbackQuery.From.Id, "Помилка, спробуй ще раз.");
+		}
 	}
 
+	private Task UnknownUpdate(Update update, ITelegramBotClient botClient)
+	{
+		_logger.LogError("Unknown update: {UpdateType}.", update.Type);
+		return Task.CompletedTask;
+	}
 
 
 
