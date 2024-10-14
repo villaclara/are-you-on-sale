@@ -44,5 +44,10 @@ public class ConstantCommands
 	/// </summary>
 	public const string RSTR_PRODUCT_CMD = @"/q_rstr_e";
 
+	/// <summary>
+	/// The callback query command. To check single product item and edit current message with actual info.
+	/// </summary>
+	public const string CHCK_PRODUCT_CMD = @"/q_chck_e";
+
 	#endregion CallbackQuery Commands.
 }

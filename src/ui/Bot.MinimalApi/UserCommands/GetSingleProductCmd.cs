@@ -29,7 +29,9 @@ public class GetSingleProductCmd(long chatId, Guid pId, int messageId, IProductS
 				replyMarkup: inlineKb);
 		}
 
-		inlineKb.AddButton(InlineKeyboardButton.WithCallbackData("Delete", ConstantCommands.DEL_SINGLE_PRODUCT_CMD + " " + product.Id))
+		inlineKb
+			.AddButton(InlineKeyboardButton.WithCallbackData("Recheck", ConstantCommands.CHCK_PRODUCT_CMD + " " + product.Id))
+			.AddButton(InlineKeyboardButton.WithCallbackData("Delete", ConstantCommands.DEL_SINGLE_PRODUCT_CMD + " " + product.Id))
 			.AddNewRow()
 			.AddButton(InlineKeyboardButton.WithCallbackData("Back", ConstantCommands.BACK_TO_LIST_EDIT_MSG_CMD));
 

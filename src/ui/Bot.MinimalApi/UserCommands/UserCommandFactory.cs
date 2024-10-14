@@ -8,6 +8,7 @@ namespace Bot.MinimalApi.UserCommands;
 public class UserCommandFactory(
 	IProductBaseService productBaseService,
 	IProductService productService,
+	ITrackProductService trackProductService,
 	TelegramBotClient bot) : IUserCommandFactory
 {
 	public IUserCommand CreateUserCmdFromMessage(Message message)
@@ -94,6 +95,13 @@ public class UserCommandFactory(
 				pId: Guid.Parse(query.Data.Split(" ")[1]),
 				messageId: query.Message!.MessageId,
 				productService,
+				bot),
+
+			// "/q_chck_e"
+			ConstantCommands.CHCK_PRODUCT_CMD => new RecheckSingleProductCmd(
+				chatId: query.From.Id,
+				pId: Guid.Parse(query.Data.Split(" ")[1]),
+				trackService: trackProductService,
 				bot),
 
 			_ => new UnknownCmd(query.From!.Id, bot)
