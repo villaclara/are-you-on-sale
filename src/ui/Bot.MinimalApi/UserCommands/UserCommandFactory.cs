@@ -102,7 +102,8 @@ public class UserCommandFactory(
 				chatId: query.From.Id,
 				pId: Guid.Parse(query.Data.Split(" ")[1]),
 				trackService: trackProductService,
-				bot),
+				bot,
+				productService),
 
 			_ => new UnknownCmd(query.From!.Id, bot)
 		};

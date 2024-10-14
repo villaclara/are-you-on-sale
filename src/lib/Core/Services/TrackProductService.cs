@@ -2,16 +2,17 @@
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
 using Models.Entities;
 using Models.Enums;
 
 namespace Core.Services;
 
-public class TrackProductService(IProductRepository productRepository, IProductBaseService productBaseService) : ITrackProductService
+public class TrackProductService(IProductRepository productRepository, IProductBaseService productBaseService, ILogger<TrackProductService> logger) : ITrackProductService
 {
 	private readonly IProductRepository _productRepository = productRepository;
 	private readonly IProductBaseService _productBaseService = productBaseService;
-
+	private readonly ILogger<TrackProductService> _logger = logger;
 
 	public event EventHandler<ProductChangedEventArgs>? ProductChanged;
 
@@ -19,6 +20,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 	{
 		foreach (var product in _productRepository.GetAllProducts())
 		{
+			_logger.LogInformation("Check for product ({productName})", product.Name);
 			await DoPriceCheckForSingleProductAsync(product);
 		}
 	}
@@ -31,6 +33,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 		// Only return here because _productBaseService handles when the product was not retrieved.
 		if (baseProduct == null)
 		{
+			_logger.LogWarning("Product returned from GetProductBaseFromOriginAsync is null ({productName})", product.Name);
 			return;
 		}
 
@@ -40,6 +43,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 		{
 			whatChanged = WhatProductFieldChanged.All;
 			OnProductChanged(new ProductChangedEventArgs(
+				null,
 				product.Id,
 				product.UserId,
 				whatChanged,
@@ -55,6 +59,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 			var newProd = product.NewProductWithUpdatedValues(originPrice: baseProduct.OriginPrice);
 			await _productRepository.UpdateProductAsync(newProd);
 			OnProductChanged(new ProductChangedEventArgs(
+				newProd,
 				product.Id,
 				product.UserId,
 				whatChanged,
@@ -71,6 +76,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 
 			// Call the Event if the product.CurrentPrice is lower than was in the DB
 			OnProductChanged(new ProductChangedEventArgs(
+				newProd,
 				product.Id,
 				product.UserId,
 				Models.Enums.WhatProductFieldChanged.CurrentPrice,
@@ -88,10 +94,13 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 		//		baseProduct.OriginPrice));
 		//}
 
+		_logger.LogInformation("Check END for product ({productName})", product.Name);
+
 	}
 
 	protected virtual void OnProductChanged(ProductChangedEventArgs args)
 	{
+		_logger.LogInformation("Invoking ProductChanged event for product ({productName})", args.Product.Name);
 		ProductChanged?.Invoke(this, args);
 	}
 

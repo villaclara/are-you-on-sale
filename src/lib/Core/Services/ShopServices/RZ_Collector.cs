@@ -12,6 +12,8 @@ public static class RZ_Collector
 		var productId = GetIdFromLink(url);
 
 		using var client = new HttpClient();
+
+		// TODO Add check if the request was successfull
 		var response = await client.GetStringAsync(_rztkApiLinkEmpty + productId);
 
 		if (response is null)

@@ -1,6 +1,8 @@
 using Bot.MinimalApi.Interfaces;
+using Bot.MinimalApi.Jobs;
 using Bot.MinimalApi.Services;
 using Bot.MinimalApi.UserCommands;
+using Coravel;
 using Core.Interfaces;
 using Core.Repository.Interfaces;
 using Core.Repository.Services;
@@ -28,6 +30,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ITrackProductService, TrackProductService>();
 
 
+
 //builder.Services.AddSingleton<IBotUpdateHandler, BotUpdateHandler>();
 //builder.Services.AddSingleton<IUserCommandFactory, UserCommandFactory>();
 
@@ -40,6 +43,11 @@ var webhookUrl = builder.Configuration["BotWebhookUrl"]!;   // set your bot webh
 
 builder.Services.ConfigureTelegramBot<Microsoft.AspNetCore.Http.Json.JsonOptions>(opt => opt.SerializerOptions);
 builder.Services.AddHttpClient("tgwebhook").RemoveAllLoggers().AddTypedClient(httpClient => new TelegramBotClient(token, httpClient));
+
+builder.Services.AddTransient<RecheckAllProductsJob>();
+//builder.Services.AddScoped<RecheckOneProductJob>();
+
+builder.Services.AddScheduler();
 
 var app = builder.Build();
 
@@ -70,7 +78,16 @@ app.MapGet("/bot/setWebhook", async (TelegramBotClient bot) =>
 app.MapPost("/bot", OnUpdate);
 
 
-app.Run();
+app.Services.UseScheduler(scheduler =>
+{
+	scheduler.Schedule<RecheckAllProductsJob>()
+	.EverySeconds(10)
+	.Once()
+	.PreventOverlapping(nameof(RecheckAllProductsJob));
+
+}).LogScheduledTaskProgress();
+
+await app.RunAsync();
 
 
 

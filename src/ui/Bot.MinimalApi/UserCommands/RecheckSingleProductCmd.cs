@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace Bot.MinimalApi.UserCommands;
 
-public class RecheckSingleProductCmd(long chatId, Guid pId, ITrackProductService trackService, TelegramBotClient bot) : IUserCommand
+public class RecheckSingleProductCmd(long chatId, Guid pId, ITrackProductService trackService, TelegramBotClient bot, IProductService productService) : IUserCommand
 {
 	public long ChatId => chatId;
 
@@ -15,7 +15,11 @@ public class RecheckSingleProductCmd(long chatId, Guid pId, ITrackProductService
 	{
 		trackService.ProductChanged += HandleProductChanged;
 
-		await Task.Delay(1000);
+		var product = productService.GetProductByIdForUser(pId, ChatId);
+		if (product != null)
+		{
+			await trackService.DoPriceCheckForSingleProductAsync(product);
+		}
 
 		trackService.ProductChanged -= HandleProductChanged;
 
