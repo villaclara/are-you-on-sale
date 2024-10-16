@@ -78,14 +78,14 @@ app.MapGet("/bot/setWebhook", async (TelegramBotClient bot) =>
 app.MapPost("/bot", OnUpdate);
 
 
-app.Services.UseScheduler(scheduler =>
-{
-	scheduler.Schedule<RecheckAllProductsJob>()
-	.EverySeconds(10)
-	.Once()
-	.PreventOverlapping(nameof(RecheckAllProductsJob));
+//app.Services.UseScheduler(scheduler =>
+//{
+//	scheduler.Schedule<RecheckAllProductsJob>()
+//	.EverySeconds(10)
+//	.Once()
+//	.PreventOverlapping(nameof(RecheckAllProductsJob));
 
-}).LogScheduledTaskProgress();
+//}).LogScheduledTaskProgress();
 
 await app.RunAsync();
 

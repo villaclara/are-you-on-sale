@@ -86,7 +86,8 @@ public class UserCommandFactory(
 				chatId: query.From.Id,
 				pId: Guid.Parse(query.Data.Split(" ")[1]),
 				messageId: query.Message!.MessageId,
-				bot, productService),
+				bot,
+				productService),
 
 
 			// "/q_rstr_e"
@@ -101,6 +102,7 @@ public class UserCommandFactory(
 			ConstantCommands.CHCK_PRODUCT_CMD => new RecheckSingleProductCmd(
 				chatId: query.From.Id,
 				pId: Guid.Parse(query.Data.Split(" ")[1]),
+				messageId: query.Message!.MessageId,
 				trackService: trackProductService,
 				bot,
 				productService),

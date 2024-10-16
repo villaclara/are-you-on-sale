@@ -56,7 +56,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 		{
 			whatChanged = WhatProductFieldChanged.OriginPrice;
 
-			var newProd = product.NewProductWithUpdatedValues(originPrice: baseProduct.OriginPrice);
+			var newProd = product.NewProductWithUpdatedValues(originPrice: baseProduct.OriginPrice, currentPrice: baseProduct.CurrentPrice);
 			await _productRepository.UpdateProductAsync(newProd);
 			OnProductChanged(new ProductChangedEventArgs(
 				newProd,

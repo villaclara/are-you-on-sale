@@ -16,7 +16,7 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 		{
 			{ Message: { } message } => OnMessageReceived(message, botClient),
 			{ CallbackQuery: { } callbackQuery } => OnCallbackQueryReceived(callbackQuery, botClient),
-			_ => UnknownUpdate(update, botClient)
+			_ => UnknownUpdate(update)
 		});
 	}
 
@@ -48,7 +48,7 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 		catch (Exception ex)
 		{
 			_logger.LogError("{Method} - Ex. {Exception}", nameof(OnMessageReceived), ex.Message);
-			await bot.SendTextMessageAsync(message.Chat.Id, "Помилка, спробуй ще раз.");
+			await bot.SendTextMessageAsync(message.Chat.Id, "Error from messagee handling.");
 		}
 
 
@@ -76,14 +76,14 @@ public class BotUpdateHandler(ILogger<BotUpdateHandler> logger, IUserCommandFact
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError("{Method} - Ex. {Exception}", nameof(OnMessageReceived), ex.Message);
-			await bot.SendTextMessageAsync(callbackQuery.From.Id, "Помилка, спробуй ще раз.");
+			_logger.LogError("{Method} - Ex. {Exception}", nameof(OnMessageReceived), ex);
+			await bot.SendTextMessageAsync(callbackQuery.From.Id, "Error from callbackqery handling.");
 		}
 	}
 
-	private Task UnknownUpdate(Update update, ITelegramBotClient botClient)
+	private Task UnknownUpdate(Update update)
 	{
-		_logger.LogError("Unknown update: {UpdateType}.", update.Type);
+		_logger.LogWarning("Unknown update: {UpdateType}.", update.Type);
 		return Task.CompletedTask;
 	}
 

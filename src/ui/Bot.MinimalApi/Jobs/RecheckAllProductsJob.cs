@@ -24,6 +24,7 @@ public class RecheckAllProductsJob : IInvocable
 
 	public async Task Invoke()
 	{
+		// TODO Make it better
 		_logger.LogInformation("Invoke from RecheckAllProducts CALL at {datetime}", DateTime.Now);
 		await _trackService.DoPriceCheckAllProductsAsync();
 

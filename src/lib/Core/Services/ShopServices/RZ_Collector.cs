@@ -5,27 +5,17 @@ namespace Core.Services.ShopServices;
 
 public static class RZ_Collector
 {
-	private static string _rztkApiLinkEmpty = @"https://rozetka.com.ua/api/product-api/v4/goods/get-main?goodsId=";
+	private static readonly string _rztkApiLinkEmpty = @"https://rozetka.com.ua/api/product-api/v4/goods/get-main?goodsId=";
 
-	public static async Task<ProductBase> GetProductBaseFromShopAsync(string url)
+	public static async Task<ProductBase?> GetProductBaseFromShopAsync(string url)
 	{
 		var productId = GetIdFromLink(url);
 
-		using var client = new HttpClient();
-
-		// TODO Add check if the request was successfull
-		var response = await client.GetStringAsync(_rztkApiLinkEmpty + productId);
-
-		if (response is null)
-		{
-			throw new HttpRequestException("Failed to get data from URL.");
-		}
-
-
-
-
 		try
 		{
+			using var client = new HttpClient();
+			var response = await client.GetStringAsync(_rztkApiLinkEmpty + productId);
+
 			var title = GetWithRegex(response, @"(\.*""title"".*)(?=,""price"":"".*"",""old_price)"); // "title":"Миша SteelSeries Rival 3 USB Black (SS62513)"
 			var price = GetWithRegex(response, @"(\.*)(""price"":""[1-9]*"")(?=,""old_price)");     // "price":"1699"
 			var old_price = GetWithRegex(response, @"(\.*)(""old_price"":""[1-9]*"")(?=,""price_pcs)");     // "old_price":"1699"
@@ -46,9 +36,15 @@ public static class RZ_Collector
 				CurrentPrice = priceInt
 			};
 		}
+		catch (HttpRequestException ex)
+		{
+			Console.WriteLine(ex.Message);
+			return null;
+		}
 		catch (Exception ex)
 		{
-			throw new Exception("Failed to read data and return object." + ex);
+			Console.WriteLine(ex.Message);
+			return null;
 		}
 
 	}
