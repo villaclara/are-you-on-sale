@@ -3,12 +3,9 @@ using Models.Enums;
 
 namespace Core.EventArgs;
 
-public class ProductChangedEventArgs(Product product, Guid id, long userId, WhatProductFieldChanged productField, object oldValue, object newValue) : System.EventArgs
+public class ProductChangedEventArgs(Product oldProd, Product? newProd, WhatProductFieldChanged productField) : System.EventArgs
 {
-	public Product Product { get; set; } = product;
-	public Guid ProductId { get; set; } = id;
-	public long UserId { get; set; } = userId;
+	public Product OldProduct { get; set; } = oldProd;
+	public Product? NewProduct { get; set; } = newProd;
 	public WhatProductFieldChanged WhatFieldChanged { get; set; } = productField;
-	public object OldValue { get; set; } = oldValue;
-	public object NewValue { get; set; } = newValue;
 }

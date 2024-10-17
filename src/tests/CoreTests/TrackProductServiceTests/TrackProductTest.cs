@@ -2,6 +2,7 @@
 using Core.Repository.Services;
 using Core.Services;
 using DB.DB;
+using Microsoft.Extensions.Logging;
 using Models.Entities;
 
 namespace CoreTests.TrackProductServiceTests;
@@ -29,7 +30,8 @@ public class TrackProductTest
 		var prodBaseService = new ProductBaseService();
 		var ctx = new ApplicationDbContext();
 		var prodRepository = new ProductRepository(ctx);
-		var trackService = new TrackProductService(prodRepository, prodBaseService);
+		var logger = new Logger<TrackProductService>(new LoggerFactory());
+		var trackService = new TrackProductService(prodRepository, prodBaseService, logger);
 
 
 		// Act

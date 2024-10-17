@@ -37,6 +37,6 @@ public class RecheckAllProductsJob : IInvocable
 
 	private async void HandleProductChanged(object? sender, ProductChangedEventArgs args)
 	{
-		await _bot.SendTextMessageAsync(chatId: args.UserId, $"Product price changed: {args.Product.Name}, Old {args.OldValue}, New {args.NewValue}.");
+		//await _bot.SendTextMessageAsync(chatId: args.UserId, $"Product price changed: {args.Product.Name}, Old {args.OldValue}, New {args.NewValue}.");
 	}
 }

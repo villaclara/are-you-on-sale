@@ -28,71 +28,95 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 	public async Task DoPriceCheckForSingleProductAsync(Product product)
 	{
 		// Get ProductBase from the OriginShop
-		var baseProduct = await _productBaseService.GetProductBaseFromOriginAsync(product.OriginType, product.OrinigLink);
+		var currentBaseProduct = await _productBaseService.GetProductBaseFromOriginAsync(product.OriginType, product.OrinigLink);
 
-		// Only return here because _productBaseService handles when the product was not retrieved.
-		if (baseProduct == null)
+		var oldProd = (Product)product.Clone();
+		ProductChangedEventArgs args = new(oldProd, null, WhatProductFieldChanged.None);
+
+		// Fail when retrieving the product from Link.
+		if (currentBaseProduct == null)
 		{
 			_logger.LogWarning("Product returned from GetProductBaseFromOriginAsync is null ({productName})", product.Name);
-			return;
+			args.WhatFieldChanged = WhatProductFieldChanged.Error;
 		}
 
-		var whatChanged = WhatProductFieldChanged.None;
-
-		if (baseProduct.Name != product.Name)
+		// Base price changed.
+		else if (currentBaseProduct.OriginPrice != product.OriginPrice)
 		{
-			whatChanged = WhatProductFieldChanged.All;
-			OnProductChanged(new ProductChangedEventArgs(
-				null,
-				product.Id,
-				product.UserId,
-				whatChanged,
-				oldValue: product.Name,
-				newValue: baseProduct.Name));
-		}
+			var newProd = product.NewProductWithUpdatedValues(originPrice: currentBaseProduct.OriginPrice, currentPrice: currentBaseProduct.CurrentPrice);
 
-		// 1. Compare base prices and do stuff
-		if (baseProduct.OriginPrice != product.OriginPrice)
-		{
-			whatChanged = WhatProductFieldChanged.OriginPrice;
-
-			var newProd = product.NewProductWithUpdatedValues(originPrice: baseProduct.OriginPrice, currentPrice: baseProduct.CurrentPrice);
+			args.WhatFieldChanged = WhatProductFieldChanged.OriginPrice;
+			args.NewProduct = newProd;
 			await _productRepository.UpdateProductAsync(newProd);
-			OnProductChanged(new ProductChangedEventArgs(
-				newProd,
-				product.Id,
-				product.UserId,
-				whatChanged,
-				product.OriginPrice,
-				baseProduct.OriginPrice));
 		}
 
-		// 2. Compare Current Prices and do stuff
-		if (baseProduct.CurrentPrice != product.CurrentPrice && baseProduct.CurrentPrice != baseProduct.OriginPrice)
+		// Current price changed.
+		else if (currentBaseProduct.CurrentPrice != product.CurrentPrice)
 		{
-			int sale = (int)(baseProduct.OriginPrice - (baseProduct.CurrentPrice * 100 / baseProduct.OriginPrice));
-			var newProd = product.NewProductWithUpdatedValues(currentPrice: baseProduct.CurrentPrice, originPrice: baseProduct.OriginPrice, salePercent: sale);
+			int sale = (int)(currentBaseProduct.OriginPrice - (currentBaseProduct.CurrentPrice * 100 / currentBaseProduct.OriginPrice));
+			var newProd = product.NewProductWithUpdatedValues(currentPrice: currentBaseProduct.CurrentPrice, originPrice: currentBaseProduct.OriginPrice, salePercent: sale);
+			args.WhatFieldChanged = WhatProductFieldChanged.CurrentPrice;
+			args.NewProduct = newProd;
 			await _productRepository.UpdateProductAsync(newProd);
-
-			// Call the Event if the product.CurrentPrice is lower than was in the DB
-			OnProductChanged(new ProductChangedEventArgs(
-				newProd,
-				product.Id,
-				product.UserId,
-				Models.Enums.WhatProductFieldChanged.CurrentPrice,
-				baseProduct.CurrentPrice,
-				baseProduct.OriginPrice));
 		}
+
+		if (args.WhatFieldChanged != WhatProductFieldChanged.None)
+		{
+			OnProductChanged(args);
+		}
+
+
+		//var whatChanged = WhatProductFieldChanged.None;
+
+		//if (currentBaseProduct.Name != product.Name)
+		//{
+
+		//	whatChanged = WhatProductFieldChanged.All;
+		//	var args = new ProductChangedEventArgs(
+		//		product,
+		//		null,
+		//		WhatProductFieldChanged.All);
+		//	OnProductChanged(args);
+		//}
+
+		//// 1. Compare base prices and do stuff
+		//else if (currentBaseProduct.OriginPrice != product.OriginPrice)
+		//{
+		//	whatChanged = WhatProductFieldChanged.OriginPrice;
+		//	var newProd = product.NewProductWithUpdatedValues(originPrice: currentBaseProduct.OriginPrice, currentPrice: currentBaseProduct.CurrentPrice);
+		//	if (await _productRepository.UpdateProductAsync(newProd) != null)
+		//	{
+		//		var args = new ProductChangedEventArgs(product, newProd, WhatProductFieldChanged.OriginPrice);
+		//		OnProductChanged(args);
+		//	}
+		//}
+
+		//// 2. Compare Current Prices and do stuff
+		//else if (currentBaseProduct.CurrentPrice != product.CurrentPrice && currentBaseProduct.CurrentPrice != currentBaseProduct.OriginPrice)
+		//{
+		//	int sale = (int)(currentBaseProduct.OriginPrice - (currentBaseProduct.CurrentPrice * 100 / currentBaseProduct.OriginPrice));
+		//	var newProd = product.NewProductWithUpdatedValues(currentPrice: currentBaseProduct.CurrentPrice, originPrice: currentBaseProduct.OriginPrice, salePercent: sale);
+
+		//	whatChanged = WhatProductFieldChanged.CurrentPrice;
+
+		//	var args = new ProductChangedEventArgs(
+		//		product,
+		//		newProd,
+		//		WhatProductFieldChanged.CurrentPrice);
+
+		//	await _productRepository.UpdateProductAsync(newProd);
+
+		//	// Call the Event if the product.CurrentPrice is lower than was in the DB
+		//	OnProductChanged(args);
+		//}
 
 		//if (whatChanged != WhatProductFieldChanged.None)
 		//{
-		//	OnProductChanged(new ProductChangedEventArgs(
-		//		product.Id,
-		//		product.UserId,
-		//		whatChanged,
-		//		baseProduct.CurrentPrice,
-		//		baseProduct.OriginPrice));
+		//	OnProductChanged
 		//}
+
+
+
 
 		_logger.LogInformation("Check END for product ({productName})", product.Name);
 
@@ -100,7 +124,7 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 
 	protected virtual void OnProductChanged(ProductChangedEventArgs args)
 	{
-		_logger.LogInformation("Invoking ProductChanged event for product ({productName})", args.Product.Name);
+		_logger.LogInformation("Invoking ProductChanged event for product ({productName}) with WhatChanged({WhatChanged})", args.OldProduct.Name, args.WhatFieldChanged);
 		ProductChanged?.Invoke(this, args);
 	}
 

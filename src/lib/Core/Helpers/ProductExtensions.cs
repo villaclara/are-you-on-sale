@@ -34,9 +34,10 @@ public static class ProductExtensions
 		OriginType originType = OriginType.None
 		)
 	{
+
 		product.Id = id != default ? id : product.Id;
 
-		product.Name = name != null ? name : product.Name;
+		product.Name = name ?? product.Name;
 
 		product.UserId = userId != default ? userId : product.UserId;
 
@@ -46,7 +47,7 @@ public static class ProductExtensions
 
 		product.SalePercent = salePercent != default ? salePercent : product.SalePercent;
 
-		product.OrinigLink = originLink != null ? originLink : product.OrinigLink;
+		product.OrinigLink = originLink ?? product.OrinigLink;
 
 		product.CreatedAtDate = createdAt != default ? createdAt : product.CreatedAtDate;
 

@@ -2,6 +2,7 @@
 using Bot.MinimalApi.Utils;
 using Core.EventArgs;
 using Core.Interfaces;
+using Models.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -49,16 +50,39 @@ public class RecheckSingleProductCmd(long chatId, Guid pId, int messageId, ITrac
 		await bot.DeleteMessageAsync(ChatId, messageId);
 
 		var inlineKb = new InlineKeyboardMarkup()
-				.AddButton(InlineKeyboardButton.WithCallbackData("Recheck", ConstantCommands.CHCK_PRODUCT_CMD + " " + args.Product.Id))
-				.AddButton(InlineKeyboardButton.WithCallbackData("Delete", ConstantCommands.DEL_SINGLE_PRODUCT_CMD + " " + args.Product.Id))
+				.AddButton(InlineKeyboardButton.WithCallbackData("Recheck", ConstantCommands.CHCK_PRODUCT_CMD + " " + args.OldProduct.Id))
+				.AddButton(InlineKeyboardButton.WithCallbackData("Delete", ConstantCommands.DEL_SINGLE_PRODUCT_CMD + " " + args.OldProduct.Id))
 				.AddNewRow()
 				.AddButton(InlineKeyboardButton.WithCallbackData("Back", ConstantCommands.BACK_TO_LIST_EDIT_MSG_CMD));
 
 
+		string whatChanged = args.WhatFieldChanged switch
+		{
+			WhatProductFieldChanged.CurrentPrice =>
+				$"Current Price: Old - {args.OldProduct.CurrentPrice} - New - {args.NewProduct!.CurrentPrice}\n\n" + args.NewProduct!.ToHtml_ProductFull(),
+			WhatProductFieldChanged.OriginPrice =>
+				$"Base Price: Old - {args.OldProduct.OriginPrice} - New - {args.NewProduct!.OriginPrice}\n\n" + args.NewProduct!.ToHtml_ProductFull(),
+			WhatProductFieldChanged.All => "All",
 
-		await bot.SendTextMessageAsync(ChatId, $"[{DateTime.Now}]" + "\nProduct HAS changed.\n\n" + $"Old Value: " + args.Product.ToHtml_ProductFull(),
+			// Handles Error type also.
+			_ => $"Link does not provide to {args.OldProduct.Name} anymore. Please delete it."
+		};
+
+		string str = $"[{DateTime.Now}]\n"
+			+ "Product HAS changed\n"
+			+ whatChanged;
+
+		await bot.SendTextMessageAsync(ChatId,
+			str,
 			parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
 			replyMarkup: inlineKb);
+
+	}
+
+	private void Do(ProductChangedEventArgs args)
+	{
+
+
 
 	}
 }
