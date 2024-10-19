@@ -1,7 +1,9 @@
-﻿using Coravel.Invocable;
+﻿using Bot.MinimalApi.Extensions;
+using Coravel.Invocable;
 using Core.EventArgs;
 using Core.Interfaces;
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.MinimalApi.Jobs;
 
@@ -37,6 +39,13 @@ public class RecheckAllProductsJob : IInvocable
 
 	private async void HandleProductChanged(object? sender, ProductChangedEventArgs args)
 	{
-		//await _bot.SendTextMessageAsync(chatId: args.UserId, $"Product price changed: {args.Product.Name}, Old {args.OldValue}, New {args.NewValue}.");
+		var inlineKb = new InlineKeyboardMarkup()
+				.AddButton(InlineKeyboardButton.WithUrl("Web", args.OldProduct.OrinigLink));
+
+		await _bot.SendTextMessageAsync(args.OldProduct.UserId,
+			args.MakeTextProductChangedFromArgs(),
+			parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
+			replyMarkup: inlineKb);
+
 	}
 }

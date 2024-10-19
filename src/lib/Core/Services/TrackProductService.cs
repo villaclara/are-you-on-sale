@@ -60,6 +60,9 @@ public class TrackProductService(IProductRepository productRepository, IProductB
 			await _productRepository.UpdateProductAsync(newProd);
 		}
 
+		product.LastCheckedDate = DateTime.Now.ToUniversalTime();
+		await _productRepository.UpdateProductAsync(product);
+
 		if (args.WhatFieldChanged != WhatProductFieldChanged.None)
 		{
 			OnProductChanged(args);
