@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using Core.EventArgs;
 using Models.Entities;
+using Models.Enums;
 
 namespace Bot.MinimalApi.Extensions;
 
@@ -46,5 +48,28 @@ public static class MessageFormatHtmlExtensions
 		return sb.ToString();
 	}
 
+	public static string To_Html_ProductChangedArgsToString(this ProductChangedEventArgs args)
+	{
+		string whatChanged = args.WhatFieldChanged switch
+		{
+			WhatProductFieldChanged.CurrentPrice =>
+				@$"Current Price: Old - <b>{args.OldProduct.CurrentPrice}</b> - New - <b>{args.NewProduct!.CurrentPrice}</b>",
+			WhatProductFieldChanged.OriginPrice =>
+				@$"Base Price: Old - <b>{args.OldProduct.OriginPrice}</b> - New - <b>{args.NewProduct!.OriginPrice}</b>",
+			WhatProductFieldChanged.All => "All",
+
+			// Handles Error type also.
+			_ => $"Link does not provide to {args.OldProduct.Name} anymore. Please delete it."
+		};
+
+		var sb = new StringBuilder();
+		sb.AppendLine($@"[{DateTime.Now}]")
+			.AppendLine($@"Product HAS Changed")
+			.AppendLine()
+			.AppendLine($@"<b>{args.OldProduct.Name}</b>")
+			.AppendLine($@"{whatChanged}");
+
+		return sb.ToString();
+	}
 
 }

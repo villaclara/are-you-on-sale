@@ -81,8 +81,7 @@ app.MapPost("/bot", OnUpdate);
 app.Services.UseScheduler(scheduler =>
 {
 	scheduler.Schedule<RecheckAllProductsJob>()
-	.EverySeconds(10)
-	.Once()
+	.EverySeconds(30)
 	.PreventOverlapping(nameof(RecheckAllProductsJob));
 
 }).LogScheduledTaskProgress();

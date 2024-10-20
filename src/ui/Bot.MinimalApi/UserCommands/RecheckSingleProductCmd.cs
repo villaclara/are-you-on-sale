@@ -52,7 +52,7 @@ public class RecheckSingleProductCmd(long chatId, Guid pId, int messageId, ITrac
 				.AddButton(InlineKeyboardButton.WithUrl("Web", args.OldProduct.OrinigLink));
 
 		await bot.SendTextMessageAsync(ChatId,
-			args.MakeTextProductChangedFromArgs(),
+			args.To_Html_ProductChangedArgsToString(),
 			parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
 			replyMarkup: inlineKb);
 

@@ -43,7 +43,7 @@ public class RecheckAllProductsJob : IInvocable
 				.AddButton(InlineKeyboardButton.WithUrl("Web", args.OldProduct.OrinigLink));
 
 		await _bot.SendTextMessageAsync(args.OldProduct.UserId,
-			args.MakeTextProductChangedFromArgs(),
+			args.To_Html_ProductChangedArgsToString(),
 			parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
 			replyMarkup: inlineKb);
 
