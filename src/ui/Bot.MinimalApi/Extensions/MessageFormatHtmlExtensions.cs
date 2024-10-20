@@ -20,8 +20,8 @@ public static class MessageFormatHtmlExtensions
 	{
 		var sb = new StringBuilder();
 		sb.AppendLine(@$"<b>{product.Name}</b>")
-			.AppendLine($@"Поточна ціна: <b>{product.CurrentPrice}</b>")
-			.AppendLine($@"Старт. ціна: <b>{product.OriginPrice}</b>")
+			.AppendLine($@"Поточна ціна: <b>{product.CurrentPrice}</b> грн.")
+			.AppendLine($@"Старт. ціна: <b>{product.OriginPrice}</b> грн.")
 			.AppendLine($@"Ост. перевірка: <b>{product.LastCheckedDate}</b>")
 			.AppendLine($@"Link: {product.OrinigLink}");
 
@@ -53,9 +53,9 @@ public static class MessageFormatHtmlExtensions
 		string whatChanged = args.WhatFieldChanged switch
 		{
 			WhatProductFieldChanged.CurrentPrice =>
-				@$"Current Price: Old - <b>{args.OldProduct.CurrentPrice}</b> - New - <b>{args.NewProduct!.CurrentPrice}</b>",
+				@$"Current Price: Old - <b>{args.OldProduct.CurrentPrice}</b> грн. - New - <b>{args.NewProduct!.CurrentPrice}</b> грн.",
 			WhatProductFieldChanged.OriginPrice =>
-				@$"Base Price: Old - <b>{args.OldProduct.OriginPrice}</b> - New - <b>{args.NewProduct!.OriginPrice}</b>",
+				@$"Base Price: Old - <b>{args.OldProduct.OriginPrice}</b> гре. - New - <b>{args.NewProduct!.OriginPrice}</b> грн.",
 			WhatProductFieldChanged.All => "All",
 
 			// Handles Error type also.

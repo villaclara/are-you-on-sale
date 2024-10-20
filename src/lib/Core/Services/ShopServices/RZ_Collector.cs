@@ -17,8 +17,8 @@ public static class RZ_Collector
 			var response = await client.GetStringAsync(_rztkApiLinkEmpty + productId);
 
 			var title = GetWithRegex(response, @"(\.*""title"".*)(?=,""price"":"".*"",""old_price)"); // "title":"Миша SteelSeries Rival 3 USB Black (SS62513)"
-			var price = GetWithRegex(response, @"(\.*)(""price"":""[1-9]*"")(?=,""old_price)");     // "price":"1699"
-			var old_price = GetWithRegex(response, @"(\.*)(""old_price"":""[1-9]*"")(?=,""price_pcs)");     // "old_price":"1699"
+			var price = GetWithRegex(response, @"(\.*)(""price"":""[0-9]*"")(?=,""old_price)");     // "price":"1699"
+			var old_price = GetWithRegex(response, @"(\.*)(""old_price"":""[0-9]*"")(?=,""price_pcs)");     // "old_price":"1699"
 
 			string titleCut = title[9..^1];
 			string priceCut = price[9..^1]; // same as .Remove(priceCut.Length - 1) or .Substring(0, priceCut.Length - 1)
